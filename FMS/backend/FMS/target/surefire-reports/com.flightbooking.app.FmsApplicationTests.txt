@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.flightbooking.app.FmsApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.953 s -- in com.flightbooking.app.FmsApplicationTests
