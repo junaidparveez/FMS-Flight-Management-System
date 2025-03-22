@@ -2,7 +2,7 @@
 
 📌 Project Overview
 
-The Flight Management System is a backend application built using Spring Boot, providing a RESTful API for managing flights, bookings, passengers, payments, and airports. It includes JWT-based authentication, CORS handling, and Spring Data JPA for database operations.
+The Flight Management System is a backend application built using Spring Boot and reactjs , providing a RESTful API for managing flights, bookings, passengers, payments, and airports. It includes JWT-based authentication, CORS handling, and Spring Data JPA for database operations.
 
 🚀 Tech Stack Spring Boot - Backend framework Spring Web - REST API development Spring Security & JWT - Authentication & authorization Spring Data JPA (Hibernate) - Database ORM Lombok - Reduces boilerplate code CORS Configuration - Enables cross-origin requests MySQL/PostgreSQL - Database (Configurable) Swagger - API documentation
 
@@ -10,13 +10,10 @@ The Flight Management System is a backend application built using Spring Boot, p
 
 ✅ JWT Token-based Authentication & Authorization✅ Role-based Access Control (Admin, User, etc.)✅ CORS Configuration - Allows frontend communication✅ CRUD Operations for Flights, Bookings, Passengers, Airports, Payments✅ Spring Data JPA for seamless database management✅ Lombok Integration - Reduces boilerplate code✅ Exception Handling & Logging
 
-💂 Project Structure
-
-/src/main/java/com/flightbooking/app ├── airport ├── airline ├── booking ├── flight ├── passenger ├── payment ├── security ├── config ├── repository ├── service ├── controller
 
 🛠️ Installation & Setup
 
-1️⃣ Clone the Repository git clone https://github.com/junaidparveez/FMS-Flight-Management-System-Server.git cd flight-management-system
+1️⃣ Clone the Repository git clone https://github.com/junaidparveez/FMS-Flight-Management-System.git cd flight-management-system
 
 2️⃣ Configure Database
 
