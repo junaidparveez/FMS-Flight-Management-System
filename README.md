@@ -1,4 +1,4 @@
-✈️ Flight Management System - Backend (Spring Boot)
+✈️ Flight Management System - Backend (Spring Boot) And Frontend (Reactjs)
 
 📌 Project Overview
 
