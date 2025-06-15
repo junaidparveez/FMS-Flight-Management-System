@@ -1,37 +1,23 @@
-// import { createBrowserRouter } from "react-router-dom";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Login from "./pages/Login";
-// import HomePage from "./pages/HomePage";
-// import Flights from "./pages/Flights";
-// import Booking from "./pages/Booking";
-import Register from "./pages/Register";
-import DashBoard from "./pages/DashBoard";
-import Flights from "./pages/Flights";
-const AppRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/home",
-    element: <DashBoard />,
-  },
-  {
-    path: "/flights",
-    element: <Flights />,
-  },
-  // {
-  //   path: "/booking",
-  //   element: <Booking />,
-  // },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  // {
-  //   path: "/dashboard",
-  //   element: <DashBoard />,
-  // },
-]);
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import DashboardPage from './features/dashboard/pages/DashboardPage';
+import LoginPage from './features/auth/pages/LoginPage';
+import FlightsPage from './features/flights/pages/FlightsPage';
+import BookingPage from './features/bookings/pages/BookingPage';
+import ProtectedRoute from './common/components/ProtectedRoute';
+import Register from './features/auth/pages/Register';
+
+const AppRouter = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/flights" element={<ProtectedRoute><FlightsPage /></ProtectedRoute>} />
+      <Route path="/bookings" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+      <Route path="/register" element={<Register/>}></Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
 
 export default AppRouter;

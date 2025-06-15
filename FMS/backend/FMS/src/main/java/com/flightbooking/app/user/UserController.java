@@ -1,6 +1,7 @@
 package com.flightbooking.app.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserController {
 
     private final UserService userService;
@@ -17,7 +18,7 @@ public class UserController {
     public UserController (UserService userService){
         this.userService=userService;
     }
-    @PostMapping("/register")
+    @PostMapping("register")
     public User saveUser(@RequestBody User user){
         return userService.saveUser(user);
     }
@@ -30,7 +31,7 @@ public class UserController {
 
 
     @GetMapping("/login")
-    public String logUser(@RequestParam String userName,@RequestParam String password){
+    public Map<String, Object> logUser(@RequestParam String userName,@RequestParam String password){
 
         return userService.authenticateUser(userName,password);
     }
