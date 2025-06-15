@@ -1,8 +1,18 @@
-import { RouterProvider } from "react-router-dom";
-import AppRouter from "./AppRouter";
+import React from 'react';
+import AppRouter from './AppRouter';
+import { AuthProvider } from './common/context/AuthContext';
+import { ThemeProvider } from './common/context/ThemeContext';
+import NotificationProvider from './common/components/NotificationProvider';
 
 function App() {
-  return <RouterProvider router={AppRouter} />;
+  return (
+    <NotificationProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <AppRouter />
+        </ThemeProvider>
+      </AuthProvider>
+    </NotificationProvider>
+  );
 }
-
 export default App;

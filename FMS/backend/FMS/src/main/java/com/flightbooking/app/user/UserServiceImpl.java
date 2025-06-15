@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.flightbooking.app.security.JWTService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -75,18 +77,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String authenticateUser(String userName, String password) {
+	public Map<String, Object> authenticateUser(String userName, String password) {
 		User user = userRepo.findByUserName(userName);
 		
-		
+		   Map<String,Object> result = new HashMap<>();
+	       
 		Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
 //		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 //	String encryptedPasswordOfUser=	bCryptPasswordEncoder.encode(user.getPassword());
 //		String encryptedPasswordFromReq=bCryptPasswordEncoder.encode(password);
 		if (authentication.isAuthenticated()) {
-			return jwtService.generateToken( userName);
+			String token= jwtService.generateToken( userName);
+			result.put("token", token);
+			result.put("user", user);
+			return result;
+			
+			
 			
 		}
+		
+		
+
+        // Build response map
+     
+
+      
+		
 		return null;
 	}
 

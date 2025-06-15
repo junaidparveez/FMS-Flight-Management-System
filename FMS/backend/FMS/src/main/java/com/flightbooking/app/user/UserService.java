@@ -3,6 +3,7 @@ package com.flightbooking.app.user;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -13,7 +14,7 @@ public interface UserService {
    User findUserById(Integer uid);
    User updateUser(User user ,Integer uid);
 
-   String authenticateUser(String userName,String password);
+   Map<String, Object> authenticateUser(String userName,String password);
 
 
 }
