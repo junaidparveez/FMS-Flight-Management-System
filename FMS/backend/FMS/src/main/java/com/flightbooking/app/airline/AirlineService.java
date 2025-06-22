@@ -2,6 +2,7 @@ package com.flightbooking.app.airline;
 
 import java.util.List;
 
+
 public interface AirlineService {
         Airline saveAirline(Airline airline);
     Airline updateAirline(Airline airline,Integer aid);
