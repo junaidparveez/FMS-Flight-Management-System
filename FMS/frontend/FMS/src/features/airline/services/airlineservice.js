@@ -24,3 +24,9 @@ export const deletAirline=async(id)=>
     const response=await apiClient.delete(`/airlines/${id}`);
     return response.data;
 }
+
+export const updateAirline=async(airline,id)=>
+{
+    const response=await apiClient.put(`/airlines/${id}`,airline);
+    return response.data;
+}
