@@ -140,9 +140,7 @@ const FlightsPage = () => {
     // 1) Top‐level flex container
     <Box display="flex" height="100vh">
       {/* 2) Sidebar with fixed width */}
-      <Box flexShrink={0}>
-        <Sidebar />
-      </Box>
+   
 
       {/* 3) Main content area grows to fill remaining space */}
       <Box component="main" flexGrow={1} p={2} overflow="auto">
