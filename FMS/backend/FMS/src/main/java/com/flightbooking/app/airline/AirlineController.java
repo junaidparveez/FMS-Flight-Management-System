@@ -38,6 +38,7 @@ public class AirlineController {
 
 	    @DeleteMapping("/{id}")
 	    public ResponseEntity<Void> deleteAirline(@PathVariable Integer id) {
+	    	System.out.println("Hello Id "+id);
 	        airlineService.deleteAirlineById(id);
 	        return ResponseEntity.noContent().build();
 	    }

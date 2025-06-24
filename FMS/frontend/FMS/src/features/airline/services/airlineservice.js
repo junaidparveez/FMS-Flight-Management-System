@@ -15,7 +15,7 @@ export const fetchAirline=async(id)=>
 
 export const createAirline=async(airline)=>
 {
-    const response=await apiClient.post(`/airlines`,);
+    const response=await apiClient.post(`/airlines`,airline);
     return response.data;
 }
 
