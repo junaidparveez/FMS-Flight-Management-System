@@ -11,6 +11,7 @@ import {
   Button,
   MenuItem,
   Stack,
+  Select,
 } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -55,6 +56,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
   const formik = useFormik({
     initialValues: {
       flightNumber: initialFlight?.flightNumber || "",
+      flightID: initialFlight?.flightID || "",
       departureDateTime: initialFlight?.departureDateTime || "",
       arrivalDateTime: initialFlight?.arrivalDateTime || "",
       originalAirportCode: initialFlight?.originalAirportCode || "",
@@ -66,12 +68,12 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     },
     validationSchema: Yup.object({
       flightNumber: Yup.string().required("Required"),
-      departureDateTime: Yup.date().required("Required"),
-      arrivalDateTime: Yup.date().required("Required"),
-      originalAirportCode: Yup.string().required("Required"),
-      destinationAirportCode: Yup.string().required("Required"),
-      availableSeats: Yup.number().min(1, "Must be > 0").required("Required"),
-      // airportId: Yup.string().required("Required"),
+      // departureDateTime: Yup.date().required("Required"),
+      // arrivalDateTime: Yup.date().required("Required"),
+      // originalAirportCode: Yup.string().required("Required"),
+      // destinationAirportCode: Yup.string().required("Required"),
+      // availableSeats: Yup.number().min(1, "Must be > 0").required("Required"),
+      airportId: Yup.string().required("Required"),
       airlineId: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
@@ -113,7 +115,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
             }
           />
           {/* ... other fields ... */}
-          <TextField
+          <Select
             select
             fullWidth
             label="Airport"
@@ -124,12 +126,12 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
             helperText={formik.touched.airportId && formik.errors.airportId}
           >
             {airports.map((a) => (
-              <MenuItem key={a.id} value={a.id}>
-                {a.name}
+              <MenuItem key={a.airportCode} value={a.airportCode}>
+                {a.airportName}
               </MenuItem>
             ))}
-          </TextField>
-          <TextField
+          </Select>
+          <Select
             select
             fullWidth
             label="Airline"
@@ -140,11 +142,11 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
             helperText={formik.touched.airlineId && formik.errors.airlineId}
           >
             {airlines.map((al) => (
-              <MenuItem key={al.airlineId} value={al.airlineName}>
+              <MenuItem key={al.airlineId} value={al.airlineId}>
                 {al.airlineName}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
         </Stack>
       </DialogContent>
       <DialogActions>
