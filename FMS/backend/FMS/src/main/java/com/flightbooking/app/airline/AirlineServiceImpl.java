@@ -1,9 +1,10 @@
 package com.flightbooking.app.airline;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class AirlineServiceImpl implements AirlineService{
 
     @Autowired

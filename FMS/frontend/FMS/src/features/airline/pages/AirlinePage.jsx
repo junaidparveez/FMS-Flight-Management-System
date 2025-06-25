@@ -1,4 +1,3 @@
-// src/features/flights/pages/FlightsPage.jsx
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -14,62 +13,50 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import FlightForm from "../components/FlightForm";
-import FlightChart from "../components/FlightChart";
-import { fetchFlights, deleteFlight } from "../services/flightService";
-import Sidebar from "../../../common/components/Sidebar";
+import AirlineForm from "../components/AirlineForm";
+import AirlineChart from "../components/AirlineChart";
 
-const FlightsPage = () => {
+import { fetchAirlines, deletAirline } from "../services/airlineservice";
+
+const AirlinePage = () => {
+  const [open, setOpen] = useState();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [selectedFlight, setSelectedFlight] = useState(null);
 
-  // ✅ useQuery with object syntax
-  const { data: flights = [], isLoading } = useQuery({
-    queryKey: ["flights"],
-    queryFn: fetchFlights,
+  const [selectedAirine, setSelectedAirline] = useState();
+
+  const { data: airlines = [], isLoading } = useQuery({
+    queryKey: ["airlines"],
+    queryFn: fetchAirlines,
   });
 
-  // ✅ deleteFlight mutation with object syntax
   const deleteMutation = useMutation({
-    mutationFn: deleteFlight,
+    mutationFn: deletAirline,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["flights"] });
+      queryClient.invalidateQueries({ queryKey: ["airlines"] });
     },
   });
-
   const handleDelete = (id) => {
-    if (window.confirm("Delete this flight?")) {
+    if (window.confirm("Delete this Airline?")) {
       deleteMutation.mutate(id);
     }
   };
-
   const handleRowClick = (params) => {
-    setSelectedFlight(params.row);
+    setSelectedAirline(params.row);
     setOpen(true);
   };
   const handleCreate = () => {
-    setSelectedFlight(null);
+    setSelectedAirline(null);
     setOpen(true);
   };
 
-  // Stats
-  const totalFlights = flights.length;
-  const avgSeats = totalFlights
-    ? (
-        flights.reduce((sum, f) => sum + (f.availableSeats || 0), 0) /
-        totalFlights
-      ).toFixed(1)
-    : 0;
+  const totalAirlines = airlines.length;
 
   const columns = [
-    { field: "flightNumber", headerName: "Flight #", width: 130 },
-    { field: "departureDateTime", headerName: "Departure", flex: 1 },
-    { field: "arrivalDateTime", headerName: "Arrival", flex: 1 },
-    { field: "originalAirportCode", headerName: "Origin", width: 100 },
-    { field: "destinationAirportCode", headerName: "Destination", width: 100 },
-    { field: "availableSeats", headerName: "Seats", type: "number", width: 80 },
-    { field: "airlineId", headerName: "Airline", width: 120 },
+    { field: "airlineId", headerName: "Flight #", width: 130 },
+    { field: "airlineName", headerName: "Departure", flex: 1 },
+    { field: "contactNumber", headerName: "Arrival", flex: 1 },
+    { field: "operatingRegion", headerName: "Origin", width: 100 },
+    { field: "flights", headerName: "Destination", width: 100 },
     {
       field: "delete",
       headerName: "Delete",
@@ -89,40 +76,35 @@ const FlightsPage = () => {
       {/* 3) Main content area grows to fill remaining space */}
       <Box component="main" flexGrow={1} p={2} overflow="auto">
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h4">Flights</Typography>
+          <Typography variant="h4">Airlines</Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleCreate}
           >
-            Create New Flight
+            Create New Airline
           </Button>
         </Box>
 
         <Box my={2} display="flex" gap={2}>
           <Card variant="outlined" sx={{ flex: 1 }}>
             <CardContent>
-              <Typography variant="h6">Total Flights</Typography>
-              <Typography variant="h4">{totalFlights}</Typography>
+              <Typography variant="h6">Total Airline</Typography>
+              <Typography variant="h4">{totalAirlines}</Typography>
             </CardContent>
           </Card>
-          <Card variant="outlined" sx={{ flex: 1 }}>
-            <CardContent>
-              <Typography variant="h6">Avg Available Seats</Typography>
-              <Typography variant="h4">{avgSeats}</Typography>
-            </CardContent>
-          </Card>
+          <Card variant="outlined" sx={{ flex: 1 }}></Card>
         </Box>
 
         <Box my={2}>
-          <FlightChart flights={flights} />
+          <AirlineChart airlines={airlines} />
         </Box>
 
         <Box sx={{ height: 500, width: "100%" }}>
           <DataGrid
-            rows={flights}
+            rows={airlines}
             columns={columns}
-            getRowId={(row) => row.id || row.flightNumber}
+            getRowId={(row) => row.id || row.airlineId}
             loading={isLoading}
             pageSize={10}
             rowsPerPageOptions={[5, 10, 20]}
@@ -139,14 +121,13 @@ const FlightsPage = () => {
           />
         </Box>
 
-        <FlightForm
+        <AirlineForm
           open={open}
           onClose={() => setOpen(false)}
-          initialFlight={selectedFlight}
+          initialAirline={selectedAirine}
         />
       </Box>
     </Container>
   );
 };
-
-export default FlightsPage;
+export default AirlinePage;

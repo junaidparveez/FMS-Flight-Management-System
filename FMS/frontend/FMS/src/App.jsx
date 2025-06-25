@@ -6,6 +6,7 @@ import NotificationProvider from './common/components/NotificationProvider';
 
 function App() {
   return (
+   
     <NotificationProvider>
       <AuthProvider>
         <ThemeProvider>
