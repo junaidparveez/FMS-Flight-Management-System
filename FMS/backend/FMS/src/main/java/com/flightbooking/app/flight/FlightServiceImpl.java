@@ -2,7 +2,9 @@ package com.flightbooking.app.flight;
 
 
 import com.flightbooking.app.airline.Airline;
+import com.flightbooking.app.airline.AirlineRepo;
 import com.flightbooking.app.airport.Airport;
+import com.flightbooking.app.airport.AirportRepo;
 import com.flightbooking.app.booking.Booking;
 import com.flightbooking.app.flight.Flight;
 
@@ -17,7 +19,10 @@ import java.util.stream.Collectors;
 public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightRepo flightRepository;
-
+    @Autowired
+    private AirportRepo airportRepo;
+    @Autowired
+    private  AirlineRepo airlineRepo;
     @Override
     public List<FlightDTO> getAllFlights() {
         return flightRepository.findAll().stream()
@@ -51,8 +56,8 @@ public class FlightServiceImpl implements FlightService {
         dto.setDestinationAirportCode(flight.getDestinationAirportCode());
         dto.setAvailableSeats(flight.getAvailableSeats());
         dto.setBookings(flight.getBookings());
-        dto.setAirport(flight.getAirport());
-        dto.setAirline(flight.getAirline());
+        dto.setAirport(flight.getAirport().getAirportCode());
+        dto.setAirline(flight.getAirline().getAirlineId());
         return dto;
     }
 
@@ -66,8 +71,8 @@ public class FlightServiceImpl implements FlightService {
         flight.setDestinationAirportCode(dto.getDestinationAirportCode());
         flight.setAvailableSeats(dto.getAvailableSeats());
         flight.setBookings(dto.getBookings());
-        flight.setAirport(dto.getAirport());
-        flight.setAirline(dto.getAirline());
+        flight.setAirport(airportRepo.findById( dto.getAirport()).get());
+        flight.setAirline(airlineRepo.findById(dto.getAirline()).get() );
         return flight;
     }
 }

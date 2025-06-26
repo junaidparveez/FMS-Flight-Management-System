@@ -34,4 +34,10 @@ public class UserPrincipal implements UserDetails {
 		return user.getUserName();
 	}
 
+	
+	public Integer getUserId() {
+		// TODO Auto-generated method stub
+		return user.getUserId();
+	}
+
 }
