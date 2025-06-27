@@ -18,6 +18,6 @@ public class FlightDTO {
     private String destinationAirportCode;
     private int availableSeats;
     private List<Booking> bookings;
-    private Integer airport;
-    private Integer airline;
+    private Integer airportId;
+    private Integer airlineId;
 }

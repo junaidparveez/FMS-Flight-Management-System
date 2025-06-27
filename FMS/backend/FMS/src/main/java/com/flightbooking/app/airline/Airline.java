@@ -19,7 +19,7 @@ public class Airline extends BaseEntityFields {
     private String operatingRegion;
 
     @OneToMany(mappedBy = "airline")
-    @JsonManagedReference
+   
     private List<Flight> flights;
     
 }

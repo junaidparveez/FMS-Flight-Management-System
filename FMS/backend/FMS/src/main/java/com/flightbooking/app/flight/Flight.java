@@ -1,6 +1,7 @@
 package com.flightbooking.app.flight;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.flightbooking.app.airline.Airline;
 import com.flightbooking.app.airport.Airport;
@@ -26,15 +27,15 @@ public class Flight extends BaseEntityFields{
 	private String DestinationAirportCode;
 	private int AvailableSeats;
 	@OneToMany
-	 @JsonManagedReference
+	@JsonIgnore
 	private List<Booking> bookings;
 	@JoinColumn(name = "airportCode")
 	@ManyToOne
-	@JsonBackReference
+	@JsonIgnore
 	private Airport airport;
 	@JoinColumn(name = "airlineId")
 	@ManyToOne
-	@JsonBackReference
+	@JsonIgnore
 	private Airline airline;
 
 }

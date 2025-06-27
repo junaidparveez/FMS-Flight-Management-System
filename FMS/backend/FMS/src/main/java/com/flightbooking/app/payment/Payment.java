@@ -1,6 +1,7 @@
 package com.flightbooking.app.payment;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.flightbooking.app.booking.Booking;
 import com.flightbooking.app.util.BaseEntityFields;
 
@@ -22,7 +23,7 @@ public class Payment extends BaseEntityFields{
 
     @JoinColumn(name = "bookingId")
     @OneToOne
-    @JsonBackReference
+    @JsonIgnore
     private Booking booking;
 
 }

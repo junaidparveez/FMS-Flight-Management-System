@@ -56,8 +56,8 @@ public class FlightServiceImpl implements FlightService {
         dto.setDestinationAirportCode(flight.getDestinationAirportCode());
         dto.setAvailableSeats(flight.getAvailableSeats());
         dto.setBookings(flight.getBookings());
-        dto.setAirport(flight.getAirport().getAirportCode());
-        dto.setAirline(flight.getAirline().getAirlineId());
+        dto.setAirportId(flight.getAirport().getAirportCode());
+        dto.setAirlineId(flight.getAirline().getAirlineId());
         return dto;
     }
 
@@ -71,8 +71,8 @@ public class FlightServiceImpl implements FlightService {
         flight.setDestinationAirportCode(dto.getDestinationAirportCode());
         flight.setAvailableSeats(dto.getAvailableSeats());
         flight.setBookings(dto.getBookings());
-        flight.setAirport(airportRepo.findById( dto.getAirport()).get());
-        flight.setAirline(airlineRepo.findById(dto.getAirline()).get() );
+        flight.setAirport(airportRepo.findById( dto.getAirportId()).get());
+        flight.setAirline(airlineRepo.findById(dto.getAirlineId()).get() );
         return flight;
     }
 }

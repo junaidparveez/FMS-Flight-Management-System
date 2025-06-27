@@ -19,7 +19,7 @@ public class Airport extends BaseEntityFields {
     private String facility;
 
     @OneToMany(mappedBy = "airport")
-    @JsonManagedReference
+
     private List<Flight> flights;
 
 

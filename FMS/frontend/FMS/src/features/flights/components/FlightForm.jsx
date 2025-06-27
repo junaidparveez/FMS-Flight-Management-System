@@ -62,7 +62,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
       originalAirportCode: initialFlight?.originalAirportCode || "",
       destinationAirportCode: initialFlight?.destinationAirportCode || "",
       availableSeats: initialFlight?.availableSeats || 0,
-      bookings: initialFlight?.bookings || 0,
+      bookings: initialFlight?.bookings || [],
       airportId: initialFlight?.airportId || "",
       airlineId: initialFlight?.airlineId || "",
     },

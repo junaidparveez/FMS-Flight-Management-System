@@ -18,7 +18,7 @@ public class Passenger extends BaseEntityFields{
     private String lastName;
     private String emailId;
     private String passportNumber;
-    @JsonManagedReference
+  
     @OneToMany(mappedBy = "passenger")
     private List<Booking> bookings ;
 }
