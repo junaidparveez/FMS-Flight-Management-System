@@ -29,7 +29,8 @@ public class AirportServiceImpl implements AirportService{
 	    @Override
 	    public AirportDto saveAirport(AirportDto airportDTO) {
 	        Airport airport = convertToEntity(airportDTO);
-	        return convertToDTO(airportRepository.save(airport));
+			Airport savedAirport = airportRepository.save(airport);
+	        return convertToDTO(savedAirport);
 	    }
 
 	    @Override
@@ -48,7 +49,7 @@ public class AirportServiceImpl implements AirportService{
 
 	    private Airport convertToEntity(AirportDto dto) {
 	        Airport airport = new Airport();
-	        airport.setAirportCode(dto.getAirportCode());
+//	        airport.setAirportCode(dto.getAirportCode());
 	        airport.setAirportName(dto.getAirportName());
 	        airport.setLocation(dto.getLocation());
 	        airport.setFacility(dto.getFacility());

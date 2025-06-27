@@ -7,6 +7,7 @@ import AirlinePage from './features/airline/pages/AirlinePage';
 import BookingPage from './features/bookings/pages/BookingPage';
 import ProtectedRoute from './common/components/ProtectedRoute';
 import Register from './features/auth/pages/Register';
+import AirportPage from './features/airport/pages/AirportPage';
 
 const AppRouter = () => {
   return (
@@ -14,6 +15,7 @@ const AppRouter = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/flights" element={<ProtectedRoute><FlightsPage /></ProtectedRoute>} />
+      <Route path="/airports" element={<ProtectedRoute><AirportPage /></ProtectedRoute>} />
        <Route path="/airlines" element={<ProtectedRoute><AirlinePage /></ProtectedRoute>} />
       <Route path="/bookings" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
       <Route path="/register" element={<Register/>}></Route>

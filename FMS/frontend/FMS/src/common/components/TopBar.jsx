@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
-import React from 'react';
-
+import React from "react";
+import { useAuth } from "../context/AuthContext";
 const TopBar = () => {
+  const { logout } = useAuth();
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <>
       <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -251,7 +253,7 @@ const TopBar = () => {
               aria-expanded="false"
             >
               <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                Junaid Parveez A H
+                {user?.firstName} {user?.lastName}
               </span>
               <img
                 className="img-profile rounded-circle"
@@ -276,15 +278,10 @@ const TopBar = () => {
                 Activity Log
               </a>
               <div className="dropdown-divider"></div>
-              <a
-                className="dropdown-item"
-                href="#"
-                data-toggle="modal"
-                data-target="#logoutModal"
-              >
+              <div className="dropdown-item" onClick={logout}>
                 <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                 Logout
-              </a>
+              </div>
             </div>
           </li>
         </ul>
