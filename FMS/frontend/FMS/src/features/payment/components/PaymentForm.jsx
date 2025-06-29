@@ -8,7 +8,7 @@ const PaymentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const gatewayResponse = { cardNumber, cvv, expiry }; // Simulated response
+    const gatewayResponse = { cardNumber, cvv, expiry }; 
     const res = await initiatePayment("booking123", 2000);
     await confirmPayment(res.paymentId, gatewayResponse);
     alert("Payment processed successfully");

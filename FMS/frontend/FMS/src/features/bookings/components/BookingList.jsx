@@ -1,9 +1,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getBookings } from '../services/bookingService';
+import { fetchBookings } from '../services/bookingService';
 
 const BookingList = () => {
-  const { data, isLoading, error } = useQuery(['bookings'], getBookings);
+  const { data, isLoading, error } = useQuery(['bookings'], fetchBookings);
 
   if (isLoading) return <p>Loading bookings...</p>;
   if (error) return <p>Error loading bookings.</p>;
