@@ -23,9 +23,9 @@ public class Flight extends BaseEntityFields{
 	private Integer FlightNumber;
 	private LocalDateTime DepartureDateTime;
 	private LocalDateTime ArrivalDateTime;
-	private String OriginalAirportCode;
-	private String DestinationAirportCode;
-	private int AvailableSeats;
+	private String originalAirportCode;
+	private String destinationAirportCode;
+	private int availableSeats;
 	@OneToMany
 	@JsonIgnore
 	private List<Booking> bookings;

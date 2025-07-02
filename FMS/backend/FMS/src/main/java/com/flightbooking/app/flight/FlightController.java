@@ -34,5 +34,12 @@ public class FlightController {
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @PostMapping("/search")
+    public List<FlightDTO> getFlightsByLocationAndTime(@RequestBody BookingPayload payload) {
+        return flightService.getFlightsByCriteria(payload);
+    }
+
+    
 }
 

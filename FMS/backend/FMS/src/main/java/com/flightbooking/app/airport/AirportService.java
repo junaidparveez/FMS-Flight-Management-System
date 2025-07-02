@@ -9,4 +9,5 @@ public interface AirportService {
 	 Optional<AirportDto> getAirportById(Integer id);
 	 AirportDto saveAirport(AirportDto airportDTO);
 	 void deleteAirport(Integer id);
+	List<AirportOption> getOptions();
 }
