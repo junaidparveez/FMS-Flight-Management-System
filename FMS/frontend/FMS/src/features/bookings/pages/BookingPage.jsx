@@ -80,9 +80,13 @@ const handleSearch = async ({ sourceAirport, destinationAirport, bookingDate }) 
   };
 
   const handleCreate = () => {
-    // e.g. clear form or open modal
+    // e.g. clear form or open modal  
     setSelectedFlight(null);
   };
+
+  const loadBookings = () => {
+    
+  }
 const flightColumns = [
   { field: "flightID", headerName: "ID", width: 80 },
   { field: "flightNumber", headerName: "Flight No.", width: 120 },

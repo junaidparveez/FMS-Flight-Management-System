@@ -10,6 +10,8 @@ import {
   Typography,
   Grid,
   CircularProgress,
+  Stack,
+  MenuItem,
 } from "@mui/material";
 import apiClient from "../../../common/services/apiClient";
 
@@ -21,7 +23,12 @@ const BookingForm = ({ open, selectedFlight, onClose, onComplete }) => {
     passportNumber: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [payment, setPayment] = useState({
+    paymentMethod: "CARD",
+    amount: "",
+  });
 
   useEffect(() => {
     if (!open) {
@@ -30,45 +37,59 @@ const BookingForm = ({ open, selectedFlight, onClose, onComplete }) => {
     }
   }, [open]);
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPassenger((prev) => ({ ...prev, [name]: value }));
+    setPassenger({ ...passenger, [name]: value });
+  };
+
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPayment({ ...payment, [name]: value });
+  };
+
+  const handleClose = () => {
+    setPassenger({ firstName: "", lastName: "", emailId: "", passportNumber: "" });
+    setPayment({ paymentMethod: "CARD", amount: "" });
+    setError("");
+    onClose();
   };
 
   const handleSubmit = async () => {
-    // basic validation
+    if (!selectedFlight) return;
+
+    // Basic validations
     const { firstName, lastName, emailId, passportNumber } = passenger;
-    if (!firstName || !lastName || !emailId || !passportNumber) {
-      setError("All fields are required.");
+    const { paymentMethod, amount } = payment;
+    if (!firstName || !lastName || !emailId || !passportNumber || !paymentMethod || !amount) {
+      setError("Please fill all fields");
       return;
     }
 
-    setSubmitting(true);
+    setLoading(true);
+    // setSubmitting(true);
     setError(null);
+
+    const payload = {
+      flightId: selectedFlight.flightID,
+      passenger: { ...passenger },
+      payment: {
+        ...payment,
+        transactionDateTime: new Date().toISOString(),
+      },
+    };
     try {
-      // 1) create passenger
-      const passengerRes = await apiClient.post("/passengers", passenger);
-      const newPassenger = passengerRes.data;
-
-      // 2) create booking
-      const bookingPayload = {
-        flightId: selectedFlight.flightID,
-        passengerId: newPassenger.passengerId,
-      };
-      await apiClient.post("/bookings", bookingPayload);
-
-      // notify parent to refresh and close
-      onComplete();
+      await apiClient.post("/bookings", payload);
+      onComplete(); // refresh booking list
     } catch (err) {
       console.error(err);
-      setError("Failed to create booking. Please try again.");
+      setError("Booking failed. Try again.");
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Book Flight {selectedFlight?.flightNumber}</DialogTitle>
       <DialogContent dividers>
         {error && (
@@ -76,45 +97,61 @@ const BookingForm = ({ open, selectedFlight, onClose, onComplete }) => {
             {error}
           </Typography>
         )}
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="First Name"
-              name="firstName"
-              value={passenger.firstName}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Last Name"
-              name="lastName"
-              value={passenger.lastName}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Email ID"
-              name="emailId"
-              type="email"
-              value={passenger.emailId}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Passport Number"
-              name="passportNumber"
-              value={passenger.passportNumber}
-              onChange={handleChange}
-            />
-          </Grid>
-        </Grid>
+        <Stack spacing={2} mt={1}>
+          <TextField
+            label="First Name"
+            name="firstName"
+            value={passenger.firstName}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+            label="Last Name"
+            name="lastName"
+            value={passenger.lastName}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+            label="Email"
+            name="emailId"
+            type="email"
+            value={passenger.emailId}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+            label="Passport Number"
+            name="passportNumber"
+            value={passenger.passportNumber}
+            onChange={handleInputChange}
+            fullWidth
+          />
+
+          <TextField
+            label="Payment Method"
+            name="paymentMethod"
+            value={payment.paymentMethod}
+            onChange={handlePaymentChange}
+            select
+            fullWidth
+          >
+            <MenuItem value="CARD">Card</MenuItem>
+            <MenuItem value="UPI">UPI</MenuItem>
+            <MenuItem value="CASH">Cash</MenuItem>
+          </TextField>
+
+          <TextField
+            label="Amount"
+            name="amount"
+            type="number"
+            value={payment.amount}
+            onChange={handlePaymentChange}
+            fullWidth
+          />
+
+          {error && <div style={{ color: "red" }}>{error}</div>}
+        </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={submitting}>
