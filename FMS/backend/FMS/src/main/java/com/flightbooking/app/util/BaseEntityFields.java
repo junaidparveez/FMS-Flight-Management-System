@@ -31,12 +31,12 @@ public abstract class BaseEntityFields {
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime createdOn;
 	@LastModifiedBy
-	private Integer modifiedOn;
+	private Integer modifiedBy;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	
 	@LastModifiedDate
-	private LocalDateTime modifiedBy;
+	private LocalDateTime modifiedOn;
 
 }

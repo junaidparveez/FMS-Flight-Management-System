@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../../common/components/Sidebar";
 import TopBar from "../../../common/components/TopBar";
 
@@ -6,35 +6,68 @@ import Card from "../../../common//components/Card";
 import ChartCard from "../../../common//components/ChartCard";
 import ProgressCards from "../../../common//components/ProgressCards";
 import ColorCard from "../../../common//components/ColorCard";
+import apiClient from "../../../common/services/apiClient";
 
 const Content = () => {};
 const DashboardPage = () => {
-  const cards = [
-    {
-      title: "Total Bookings",
-      value: "1,250",
-      icon: "fa-plane",
-      color: "primary",
-    },
-    {
-      title: "Flights Today",
-      value: "85",
-      icon: "fa-calendar-day",
-      color: "success",
-    },
-    {
-      title: "Pending Payments",
-      value: "$12,500",
-      icon: "fa-credit-card",
-      color: "info",
-    },
-    {
-      title: "Canceled Flights",
-      value: "5",
-      icon: "fa-exclamation-triangle",
-      color: "warning",
-    },
-  ];
+
+
+
+
+  // const[totalFlights,setTotalFlights]=useState();
+  //  const[totalBookings,setTotalBookings]=useState();
+  //  const[totalPayments,setTotalPaymenst]=useState();
+  //  const[totalAirports,setTotalAirports]=useState();
+  const [cardsInfo, setCardsInfo] = useState([]);       // ← default to empty array
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    apiClient
+      .get("/generic/cardsinfo")                        // ← lowercase path
+      .then((res) => setCardsInfo(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load dashboard data");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  // You can replace this with your own spinner component
+  if (isLoading) {
+    return <div className="text-center py-5">Loading dashboard…</div>;
+  }
+  if (error) {
+    return <div className="text-center py-5 text-danger">{error}</div>;
+  }
+
+  // const cards = [
+  //   {
+  //     title: "Total Bookings",
+  //     value: "1,250",
+  //     icon: "fa-plane",
+  //     color: "primary",
+  //   },
+  //   {
+  //     title: "Flights Today",
+  //     value: "85",
+  //     icon: "fa-calendar-day",
+  //     color: "success",
+  //   },
+  //   {
+  //     title: "Pending Payments",
+  //     value: "$12,500",
+  //     icon: "fa-credit-card",
+  //     color: "info",
+  //   },
+  //   {
+  //     title: "Canceled Flights",
+  //     value: "5",
+  //     icon: "fa-exclamation-triangle",
+  //     color: "warning",
+  //   },
+  // ];
 
   const colors = [
     { title: "Primary", color: "primary", hex: "#4e73df" },
@@ -94,7 +127,7 @@ const DashboardPage = () => {
               </div>
 
               <div className="row">
-                {cards.map((card, index) => (
+                {cardsInfo.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}
               </div>
