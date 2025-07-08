@@ -11,13 +11,22 @@ import com.flightbooking.app.security.UserPrincipal;
 
 @Component
 public class AuditorAwareImpl implements AuditorAware<Integer> {
+
   @Override
   public Optional<Integer> getCurrentAuditor() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
     if (auth == null || !auth.isAuthenticated()) {
       return Optional.empty();
     }
-    UserPrincipal userDetails = (UserPrincipal) auth.getPrincipal();
-    return Optional.of(userDetails.getUserId());
+
+    Object principal = auth.getPrincipal();
+
+    if (principal instanceof UserPrincipal) {
+      return Optional.of(((UserPrincipal) principal).getUserId());
+    }
+
+    // When it's an anonymous user or just a String (e.g., during registration)
+    return Optional.empty();
   }
 }

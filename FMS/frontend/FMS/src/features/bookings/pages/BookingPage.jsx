@@ -1,192 +1,170 @@
-
-import BookingChart from "../components/BookingChart";
-import { fetchBookings } from "../services/bookingService";
-import React, { useState, useEffect } from "react";
-
+// src/features/bookings/pages/BookingsPage.jsx
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Box,
-  Stack,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-} from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import BookingForm from "../components/BookingForm";
-import apiClient from "../../../common/services/apiClient";
-import FlightSearchForm from "./FlightSearchForm";
+  Box, Button, Card, CardContent, Typography, Stack, TextField, MenuItem, Dialog,
+  DialogTitle, DialogContent, DialogActions
+} from '@mui/material';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+
+import {createPassenger} from '../../passenger/services/passengerService'
+import { fetchBookings, createBooking } from '../services/bookingService';
+import apiClient from '../../../common/services/apiClient';
+import PassengerForm from '../../passenger/components/PassengerForm';
+import PaymentForm from '../../payment/components/PaymentForm';
+
 
 export default function BookingsPage() {
-  // --- Existing Bookings State ---
-  const [bookings, setBookings] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  // --- New Search State ---
-  const [payload, setPayload] = useState({
-    sourceAirport: "",
-    destinationAirport: "",
-    bookingDate: "",
-  });
+  // Step states
+  const [step, setStep] = useState(1);
+  const [passenger, setPassenger] = useState({passengerId: '',firstName: '', lastName: '', emailId: '', passportNumber: '' });
+  const [flightSearch, setFlightSearch] = useState({ sourceAirport: '', destinationAirport: '', bookingDate: '' });
   const [flights, setFlights] = useState([]);
-  const [searching, setSearching] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [payment, setPayment] = useState({ paymentId:'',paymentMethod: 'CARD', amount: '' });
 
-  // Example: load existing bookings on mount
-  
-  useEffect(() => {
-    setIsLoading(true);
-    apiClient
-      .get("bookings")
-      .then((res) => setBookings(res.data))
-      .catch((err) => console.error(err))
-      .finally(() => setIsLoading(false));
-  }, []);
+  // Load bookings
+  const { data: bookings = [], isLoading: loadingBookings } = useQuery({
+    queryKey: ['bookings'],
+    queryFn: fetchBookings,
+  });
 
-  
-const handleSearch = async ({ sourceAirport, destinationAirport, bookingDate }) => {
-  if (!sourceAirport || !destinationAirport || !bookingDate) {
-    return alert("Please fill in all search fields");
-  }
-  setSearching(true);
-  try {
-    const res = await apiClient.post("/flights/search", {
-      sourceAirport,
-      destinationAirport,
-      bookingDate,
-    });
-    setFlights(res.data);
-  } catch (err) {
-    console.error(err);
-    alert("Error fetching flights");
-  } finally {
-    setSearching(false);
-  }
-};
-  const handleFlightSelect = (params) => {
+  // Mutations
+  const passengerMutation = useMutation({ mutationFn: createPassenger });
+  const bookingMutation = useMutation({
+    mutationFn: createBooking,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bookings'] }),
+  });
+
+  // Handlers
+
+
+  const handleSearchFlights = async () => {
+    const { sourceAirport, destinationAirport, bookingDate } = flightSearch;
+    if (!sourceAirport || !destinationAirport || !bookingDate) {
+      return alert('Fill search fields');
+    }
+    try {
+      const res = await apiClient.post('/flights/search', flightSearch);
+      setFlights(res.data);
+    } catch {
+      alert('Flight search failed');
+    }
+  };
+  const handleSelectFlight = (params) => {
     setSelectedFlight(params.row);
-    setIsFormOpen(true);
+    setStep(3);
   };
 
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-    setSelectedFlight(null);
+  const handleBookingSubmit = async () => {
+    try {
+      await bookingMutation.mutateAsync({
+        flightId: selectedFlight.flightID,
+        passengerId: passenger.passengerId,
+        payment: { ...payment, transactionDateTime: new Date().toISOString() }
+      });
+      alert('Booking successful');
+      setStep(1);
+      setPassenger({ firstName: '', lastName: '', emailId: '', passportNumber: '' });
+      setFlightSearch({ sourceAirport: '', destinationAirport: '', bookingDate: '' });
+      setFlights([]);
+      setSelectedFlight(null);
+    } catch {
+      alert('Booking failed');
+    }
   };
 
-  const handleBookingComplete = () => {
-    handleFormClose();
-    loadBookings();
-  };
-
-  const handleCreate = () => {
-    // e.g. clear form or open modal  
-    setSelectedFlight(null);
-  };
-
-  const loadBookings = () => {
-    
-  }
-const flightColumns = [
-  { field: "flightID", headerName: "ID", width: 80 },
-  { field: "flightNumber", headerName: "Flight No.", width: 120 },
-  {
-    field: "departureDateTime",
-    headerName: "Departs",
-    width: 180,
-    valueFormatter: (params) => {
-      const v = params?.value;
-      return v ? new Date(v).toLocaleString() : "";
-    },
-  },
-  {
-    field: "arrivalDateTime",
-    headerName: "Arrives",
-    width: 180,
-    valueFormatter: (params) => {
-      const v = params?.value;
-      return v ? new Date(v).toLocaleString() : "";
-    },
-  },
-  { field: "originalAirportCode", headerName: "From", width: 100 },
-  { field: "destinationAirportCode", headerName: "To", width: 100 },
-  { field: "availableSeats", headerName: "Seats", width: 100 },
-];
-
-  // Replace these with your actual booking columns
-  const bookingColumns = [
-    { field: "bookingId", headerName: "Booking ID", width: 120 },
-    { field: "flightNumber", headerName: "Flight No.", width: 120 },
-    { field: "passengerName", headerName: "Passenger", width: 180 },
-    { field: "bookingDate", headerName: "Booked On", width: 160 },
-    // ...
-  ];
-
+  // Render by step
   return (
     <Box p={3}>
-      <FlightSearchForm onSearch={handleSearch} />
-      {flights.length > 0 && (
-        <Box mb={5}>
-          <Typography variant="h5" gutterBottom>
-            Select a Flight to Book
-          </Typography>
-          <DataGrid
-            rows={flights}
-            columns={flightColumns}
-            getRowId={(row) => row.flightID}
-            loading={searching}
-            pageSize={5}
-            autoHeight
-            onRowClick={handleFlightSelect}
-            components={{ Toolbar: GridToolbar }}
-            componentsProps={{
-              toolbar: { showQuickFilter: true, quickFilterProps: { debounceMs: 300 } },
-            }}
-          />
-        </Box>
+   {step === 1 && (
+  <PassengerForm
+    onSuccess={(savedPassenger) => {
+      setPassenger(savedPassenger);
+      setStep(2);
+    }}
+  />
+)}
+
+      {step === 2 && (
+        <>
+          <Typography variant="h5">Step 2: Search Flights</Typography>
+          <Stack direction="row" spacing={2} my={2}>
+            <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({...flightSearch, sourceAirport: e.target.value})} />
+            <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({...flightSearch, destinationAirport: e.target.value})} />
+            <TextField
+              label="Date" name="bookingDate" type="date" InputLabelProps={{ shrink: true }}
+              value={flightSearch.bookingDate} onChange={e => setFlightSearch({...flightSearch, bookingDate: e.target.value})}
+            />
+            <Button variant="contained" onClick={handleSearchFlights}>Search</Button>
+          </Stack>
+          {flights.length > 0 && (
+            <DataGrid
+              rows={flights}
+              columns={[
+                { field: 'flightID', headerName: 'ID', width: 80 },
+                { field: 'flightNumber', headerName: 'Flight #', width: 120 },
+                { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({value}) => new Date(value).toLocaleString() },
+                { field: 'availableSeats', headerName: 'Seats', width: 100 }
+              ]}
+              getRowId={r => r.flightID}
+              autoHeight
+              onRowClick={handleSelectFlight}
+              components={{ Toolbar: GridToolbar }}
+            />
+          )}
+        </>
       )}
 
-      <Stack direction="row" spacing={2} mb={3}>
-        <Card variant="outlined" sx={{ flex: 1 }}>
-          <CardContent>
-            <Typography variant="h6">Total Bookings</Typography>
-            <Typography variant="h4">{bookings.length}</Typography>
-          </CardContent>
-        </Card>
-        <Card variant="outlined" sx={{ flex: 1 }}>
-          <CardContent>
-            <Typography variant="h6">Avg Bookings</Typography>
-            <Typography variant="h4">
-              {(bookings.length / 10).toFixed(2)}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Stack>
+      {step === 3 && selectedFlight && (
+        <Dialog open fullWidth maxWidth="sm">
+          <DialogTitle>Step 3: Payment & Confirm</DialogTitle>
+       <DialogContent>
+  <Typography gutterBottom>Flight: {selectedFlight.flightNumber}</Typography>
 
-      <BookingChart />
-      <Box mt={3}>
+  {!payment?.paymentId ? (
+    <PaymentForm
+      onSuccess={(savedPayment) => setPayment(savedPayment)}
+    />
+  ) : (
+    <Typography color="green">
+      Payment saved successfully with ID: {payment.paymentId}
+    </Typography>
+  )}
+</DialogContent>
+          <DialogActions>
+            <Button onClick={() => setStep(2)}>Back</Button>
+          <Button
+  variant="contained"
+  onClick={handleBookingSubmit}
+  disabled={bookingMutation.isLoading || !payment.paymentId}
+>
+  {bookingMutation.isLoading ? 'Booking…' : 'Confirm'}
+</Button>
+
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* Always show existing bookings */}
+      <Box mt={4}>
+        <Typography variant="h5">All Bookings</Typography>
         <DataGrid
           rows={bookings}
-          columns={bookingColumns}
-          getRowId={(row) => row.bookingId}
-          loading={isLoading}
-          pageSize={10}
-          rowsPerPageOptions={[5, 10, 20]}
-          components={{ Toolbar: GridToolbar }}
-          componentsProps={{
-            toolbar: { showQuickFilter: true, quickFilterProps: { debounceMs: 300 } },
-          }}
-          disableSelectionOnClick
+          columns={[
+            { field: 'bookingId', headerName: 'Booking ID', width: 120 },
+            { field: 'passenger.firstName', headerName: 'Passenger', width: 180, valueGetter: ({row}) => `${row.passenger.firstName} ${row.passenger.lastName}` },
+            { field: 'flight.flightNumber', headerName: 'Flight #', width: 120, valueGetter: ({row}) => row.flight.flightNumber },
+            { field: 'paymentStatus', headerName: 'Status', width: 120 }
+          ]}
+          getRowId={r => r.bookingId}
+          loading={loadingBookings}
           autoHeight
+          components={{ Toolbar: GridToolbar }}
         />
       </Box>
-
-      {/* --- Booking Form --- */}
-      <BookingForm  
-        open={isFormOpen}
-        selectedFlight={selectedFlight}
-        onClose={handleFormClose}
-        onComplete={handleBookingComplete} />
     </Box>
   );
 }

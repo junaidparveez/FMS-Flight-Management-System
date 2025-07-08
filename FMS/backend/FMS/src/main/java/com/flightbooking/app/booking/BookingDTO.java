@@ -10,8 +10,8 @@ import lombok.Data;
 public class BookingDTO {
 	 private Integer bookingId;
 	    private String paymentStatus;
-	    private Flight flight;
-	    private Passenger passenger;
-	    private Payment payment;
+	    private Integer flightId;
+	    private Integer passengerId;
+	    private Integer paymentId;
 	    }
 

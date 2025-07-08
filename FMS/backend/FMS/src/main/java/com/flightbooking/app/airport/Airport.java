@@ -6,6 +6,8 @@ import com.flightbooking.app.util.BaseEntityFields;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 @Entity
@@ -19,8 +21,9 @@ public class Airport extends BaseEntityFields {
     private String facility;
 
     @OneToMany(mappedBy = "airport")
-
     private List<Flight> flights;
+
+	
 
 
 

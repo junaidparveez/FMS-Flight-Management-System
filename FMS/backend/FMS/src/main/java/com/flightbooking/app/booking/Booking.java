@@ -28,8 +28,10 @@ public class Booking extends BaseEntityFields{
     @JsonIgnore
     @JoinColumn(name="passengerId")
     private Passenger passenger;
-  
-    @OneToOne(mappedBy = "booking")
+    
+    @OneToOne
+    @JsonIgnore
+    @JoinColumn(name="paymentId")
     private Payment payment;
 
 }

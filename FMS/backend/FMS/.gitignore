@@ -1,6 +1,7 @@
 HELP.md
 
 **/target/
+**/target/**
 **/build/
 
 target/
