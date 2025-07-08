@@ -24,7 +24,21 @@ export default function BookingsPage() {
   const [flights, setFlights] = useState([]);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [payment, setPayment] = useState({ paymentId: '', paymentMethod: 'CARD', amount: '' });
+  const[booking,setBooking]=useState();
 
+
+ useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await apiClient.get("/reports/booking");
+        setBooking(response.data);
+      } catch (error) {
+        console.error("Error fetching booking report:", error);
+      }
+    };
+
+    fetchBookings();
+  }, []);
   // Load bookings
   const { data: bookings = [], isLoading: loadingBookings } = useQuery({
     queryKey: ['bookings'],
@@ -152,13 +166,15 @@ export default function BookingsPage() {
       <Box mt={4}>
         <Typography variant="h5">All Bookings</Typography>
         <DataGrid
-          rows={bookings}
-          columns={[
-            { field: 'bookingId', headerName: 'Booking ID', width: 120 },
-            { field: 'passenger.firstName', headerName: 'Passenger', width: 180, valueGetter: ({ row }) => `${row.passenger.firstName} ${row.passenger.lastName}` },
-            { field: 'flight.flightNumber', headerName: 'Flight #', width: 120, valueGetter: ({ row }) => row.flight.flightNumber },
-            { field: 'paymentStatus', headerName: 'Status', width: 120 }
-          ]}
+          rows={booking}
+         columns={[
+  { field: 'bookingId', headerName: 'Booking ID', width: 120 },
+  { field: 'paymentStatus', headerName: 'Status', width: 120 },
+  { field: 'flightNumber', headerName: 'Flight No.', width: 130 },
+  { field: 'departureDateTime', headerName: 'Departure', width: 180 },
+  { field: 'passengerName', headerName: 'Passenger', width: 160 },
+  { field: 'paymentAmount', headerName: 'Amount', width: 120, type: 'number' }
+]}
           getRowId={r => r.bookingId}
           loading={loadingBookings}
           autoHeight

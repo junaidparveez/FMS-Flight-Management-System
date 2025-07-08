@@ -92,7 +92,8 @@ public class BookingServiceImpl implements BookingService {
 
         if (entity.getPayment() != null)
             dto.setPaymentId(entity.getPayment().getPaymentId());
-
+        dto.setCreatedBy(entity.getCreatedBy());
+        dto.setCreatedOn(entity.getCreatedOn());
         return dto;
     }
     @Override

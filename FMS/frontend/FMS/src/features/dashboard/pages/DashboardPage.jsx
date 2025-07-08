@@ -21,6 +21,7 @@ const DashboardPage = () => {
   const [cardsInfo, setCardsInfo] = useState([]);       // ← default to empty array
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const[monthlyBookingChart,setMonthlyBookingChart]=useState();
 
   useEffect(() => {
     setIsLoading(true);
@@ -33,6 +34,19 @@ const DashboardPage = () => {
       })
       .finally(() => setIsLoading(false));
   }, []);
+
+    useEffect(() => {
+    setIsLoading(true);
+    apiClient
+      .get("/charts/booking")                        // ← lowercase path
+      .then((res) => setMonthlyBookingChart(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load dashboard data");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
 
   // You can replace this with your own spinner component
   if (isLoading) {
@@ -90,7 +104,18 @@ const DashboardPage = () => {
       },
     ],
   };
-
+const bookingschartData = {
+  labels: monthlyBookingChart?.map((item) => item.monthName) || [],
+  datasets: [
+    {
+      label: "Bookings per Month",
+      data: monthlyBookingChart?.map((item) => item.value) || [],
+      backgroundColor: "rgba(78, 115, 223, 0.5)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      borderWidth: 2,
+    },
+  ],
+};
   const revenueData = {
     labels: ["Direct", "Referral", "Social"],
     datasets: [
@@ -137,9 +162,9 @@ const DashboardPage = () => {
               <div className="row">
                 {/* <!-- Area Chart --> */}
                 <ChartCard
-                  title="Earnings Overview"
-                  chartId="myAreaChart"
-                  data={earningsData}
+                  title="Bookinh "
+                  chartId="myPieChart"
+                  data={bookingschartData}
                 />
                 <ChartCard
                   title="Revenue Sources"
