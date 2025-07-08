@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
-import {createPassenger} from '../../passenger/services/passengerService'
+import { createPassenger } from '../../passenger/services/passengerService'
 import { fetchBookings, createBooking } from '../services/bookingService';
 import apiClient from '../../../common/services/apiClient';
 import PassengerForm from '../../passenger/components/PassengerForm';
@@ -19,11 +19,11 @@ export default function BookingsPage() {
 
   // Step states
   const [step, setStep] = useState(1);
-  const [passenger, setPassenger] = useState({passengerId: '',firstName: '', lastName: '', emailId: '', passportNumber: '' });
+  const [passenger, setPassenger] = useState({ passengerId: '', firstName: '', lastName: '', emailId: '', passportNumber: '' });
   const [flightSearch, setFlightSearch] = useState({ sourceAirport: '', destinationAirport: '', bookingDate: '' });
   const [flights, setFlights] = useState([]);
   const [selectedFlight, setSelectedFlight] = useState(null);
-  const [payment, setPayment] = useState({ paymentId:'',paymentMethod: 'CARD', amount: '' });
+  const [payment, setPayment] = useState({ paymentId: '', paymentMethod: 'CARD', amount: '' });
 
   // Load bookings
   const { data: bookings = [], isLoading: loadingBookings } = useQuery({
@@ -79,24 +79,24 @@ export default function BookingsPage() {
   // Render by step
   return (
     <Box p={3}>
-   {step === 1 && (
-  <PassengerForm
-    onSuccess={(savedPassenger) => {
-      setPassenger(savedPassenger);
-      setStep(2);
-    }}
-  />
-)}
+      {step === 1 && (
+        <PassengerForm
+          onSuccess={(savedPassenger) => {
+            setPassenger(savedPassenger);
+            setStep(2);
+          }}
+        />
+      )}
 
       {step === 2 && (
         <>
           <Typography variant="h5">Step 2: Search Flights</Typography>
           <Stack direction="row" spacing={2} my={2}>
-            <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({...flightSearch, sourceAirport: e.target.value})} />
-            <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({...flightSearch, destinationAirport: e.target.value})} />
+            <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({ ...flightSearch, sourceAirport: e.target.value })} />
+            <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({ ...flightSearch, destinationAirport: e.target.value })} />
             <TextField
               label="Date" name="bookingDate" type="date" InputLabelProps={{ shrink: true }}
-              value={flightSearch.bookingDate} onChange={e => setFlightSearch({...flightSearch, bookingDate: e.target.value})}
+              value={flightSearch.bookingDate} onChange={e => setFlightSearch({ ...flightSearch, bookingDate: e.target.value })}
             />
             <Button variant="contained" onClick={handleSearchFlights}>Search</Button>
           </Stack>
@@ -106,7 +106,7 @@ export default function BookingsPage() {
               columns={[
                 { field: 'flightID', headerName: 'ID', width: 80 },
                 { field: 'flightNumber', headerName: 'Flight #', width: 120 },
-                { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({value}) => new Date(value).toLocaleString() },
+                { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({ value }) => new Date(value).toLocaleString() },
                 { field: 'availableSeats', headerName: 'Seats', width: 100 }
               ]}
               getRowId={r => r.flightID}
@@ -121,28 +121,28 @@ export default function BookingsPage() {
       {step === 3 && selectedFlight && (
         <Dialog open fullWidth maxWidth="sm">
           <DialogTitle>Step 3: Payment & Confirm</DialogTitle>
-       <DialogContent>
-  <Typography gutterBottom>Flight: {selectedFlight.flightNumber}</Typography>
+          <DialogContent>
+            <Typography gutterBottom>Flight: {selectedFlight.flightNumber}</Typography>
 
-  {!payment?.paymentId ? (
-    <PaymentForm
-      onSuccess={(savedPayment) => setPayment(savedPayment)}
-    />
-  ) : (
-    <Typography color="green">
-      Payment saved successfully with ID: {payment.paymentId}
-    </Typography>
-  )}
-</DialogContent>
+            {!payment?.paymentId ? (
+              <PaymentForm
+                onSuccess={(savedPayment) => setPayment(savedPayment)}
+              />
+            ) : (
+              <Typography color="green">
+                Payment saved successfully with ID: {payment.paymentId}
+              </Typography>
+            )}
+          </DialogContent>
           <DialogActions>
-            <Button onClick={() => setStep(2)}>Back</Button>
-          <Button
-  variant="contained"
-  onClick={handleBookingSubmit}
-  disabled={bookingMutation.isLoading || !payment.paymentId}
->
-  {bookingMutation.isLoading ? 'Booking…' : 'Confirm'}
-</Button>
+            <Button onClick={() => setStep(2)}>Back</Button>F
+            <Button
+              variant="contained"
+              onClick={handleBookingSubmit}
+              disabled={bookingMutation.isLoading || !payment.paymentId}
+            >
+              {bookingMutation.isLoading ? 'Booking…' : 'Confirm'}
+            </Button>
 
           </DialogActions>
         </Dialog>
@@ -155,8 +155,8 @@ export default function BookingsPage() {
           rows={bookings}
           columns={[
             { field: 'bookingId', headerName: 'Booking ID', width: 120 },
-            { field: 'passenger.firstName', headerName: 'Passenger', width: 180, valueGetter: ({row}) => `${row.passenger.firstName} ${row.passenger.lastName}` },
-            { field: 'flight.flightNumber', headerName: 'Flight #', width: 120, valueGetter: ({row}) => row.flight.flightNumber },
+            { field: 'passenger.firstName', headerName: 'Passenger', width: 180, valueGetter: ({ row }) => `${row.passenger.firstName} ${row.passenger.lastName}` },
+            { field: 'flight.flightNumber', headerName: 'Flight #', width: 120, valueGetter: ({ row }) => row.flight.flightNumber },
             { field: 'paymentStatus', headerName: 'Status', width: 120 }
           ]}
           getRowId={r => r.bookingId}

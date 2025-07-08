@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,7 @@ import com.flightbooking.app.payment.PaymentRepo;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepo repo;
-    private final ModelMapper modelMapper;
-
+ 
     @Autowired
     private PassengerRepo passengerRepo;
 
@@ -30,9 +29,9 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
 	private  PaymentRepo paymentRepo;
     @Autowired
-    public BookingServiceImpl(BookingRepo repo, ModelMapper modelMapper) {
+    public BookingServiceImpl(BookingRepo repo) {
         this.repo = repo;
-        this.modelMapper = modelMapper;
+       
     }
 
     @Override
@@ -46,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Optional<BookingDTO> getBookingById(Integer id) {
         return repo.findById(id)
-                   .map(entity -> modelMapper.map(entity, BookingDTO.class));
+                   .map(entity -> convertToDTO(entity));
     }
 
     @Override
