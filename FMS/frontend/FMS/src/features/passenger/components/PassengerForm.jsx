@@ -29,8 +29,8 @@ export default function PassengerForm({ onSuccess }) {
 
   return (
     <>
-      <Typography variant="h5">Step 1: Passenger Details</Typography>
-      <Stack spacing={2} my={2}>
+      <Typography variant="h5" fontWeight={600} mb={2}>Step 1: Passenger Details</Typography>
+      <Stack spacing={2} my={2} sx={{ maxWidth: 500 }}>
         {['firstName','lastName','emailId','passportNumber'].map(field => (
           <TextField
             key={field}
@@ -39,12 +39,14 @@ export default function PassengerForm({ onSuccess }) {
             value={passenger[field]}
             onChange={handlePassengerChange}
             fullWidth
+            sx={{ bgcolor: '#fafafa', borderRadius: 1 }}
           />
         ))}
         <Button
           variant="contained"
           onClick={handlePassengerSubmit}
           disabled={passengerMutation.isLoading}
+          sx={{ fontWeight: 600, borderRadius: 2 }}
         >
           {passengerMutation.isLoading ? 'Saving…' : 'Next'}
         </Button>

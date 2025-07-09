@@ -18,27 +18,24 @@ import { format } from "date-fns";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  fetchAirports,
-  fetchAirlines,
-  createFlight,
-  updateFlight,
-} from "../services/flightService";
+import { fetchAirports, fetchAirlines, createFlight, updateFlight } from "../services/flightService";
+
 
 const FlightForm = ({ open, onClose, initialFlight }) => {
   const queryClient = useQueryClient();
   const isEdit = Boolean(initialFlight);
 
+  // Fetch airports and airlines
   const { data: airports = [] } = useQuery({
     queryKey: ["airports"],
     queryFn: fetchAirports,
   });
-
   const { data: airlines = [] } = useQuery({
     queryKey: ["airlines"],
     queryFn: fetchAirlines,
   });
 
+  // Mutations
   const createMutation = useMutation({
     mutationFn: createFlight,
     onSuccess: () => {
@@ -46,7 +43,6 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
       onClose();
     },
   });
-
   const updateMutation = useMutation({
     mutationFn: updateFlight,
     onSuccess: () => {
@@ -55,6 +51,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     },
   });
 
+  // Formik setup
   const formik = useFormik({
     initialValues: {
       flightNumber: initialFlight?.flightNumber || "",
@@ -72,10 +69,8 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
       const payload = {
         ...values,
         departureDateTime: values.departureDateTime ? format(values.departureDateTime, "yyyy-MM-dd HH:mm:ss") : null,
-    arrivalDateTime: values.arrivalDateTime ? format(values.arrivalDateTime, "yyyy-MM-dd HH:mm:ss") : null,
-
+        arrivalDateTime: values.arrivalDateTime ? format(values.arrivalDateTime, "yyyy-MM-dd HH:mm:ss") : null,
       };
-
       if (isEdit) {
         updateMutation.mutate({ id: initialFlight.id, ...payload });
       } else {
@@ -84,6 +79,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     },
   });
 
+  // Reset form on dialog open or initialFlight change
   useEffect(() => {
     if (initialFlight) {
       formik.setValues({
@@ -94,6 +90,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     } else {
       formik.resetForm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFlight, open]);
 
   return (
@@ -102,6 +99,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
       <DialogContent>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Stack spacing={2} mt={1}>
+            {/* Flight Number */}
             <TextField
               fullWidth
               label="Flight Number"
@@ -110,6 +108,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               onChange={formik.handleChange}
             />
 
+            {/* Departure Date */}
             <DatePicker
               label="Departure Date"
               value={formik.values.departureDateTime}
@@ -117,6 +116,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
 
+            {/* Arrival Date */}
             <DatePicker
               label="Arrival Date"
               value={formik.values.arrivalDateTime}
@@ -124,6 +124,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
 
+            {/* Origin Airport Code */}
             <TextField
               fullWidth
               label="Origin Airport Code"
@@ -132,6 +133,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               onChange={formik.handleChange}
             />
 
+            {/* Destination Airport Code */}
             <TextField
               fullWidth
               label="Destination Airport Code"
@@ -140,6 +142,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               onChange={formik.handleChange}
             />
 
+            {/* Available Seats */}
             <TextField
               fullWidth
               type="number"
@@ -149,6 +152,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               onChange={formik.handleChange}
             />
 
+            {/* Airport Select */}
             <FormControl fullWidth>
               <InputLabel>Airport</InputLabel>
               <Select
@@ -164,6 +168,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
               </Select>
             </FormControl>
 
+            {/* Airline Select */}
             <FormControl fullWidth>
               <InputLabel>Airline</InputLabel>
               <Select

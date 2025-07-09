@@ -24,7 +24,7 @@ export default function BookingsPage() {
   const [flights, setFlights] = useState([]);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [payment, setPayment] = useState({ paymentId: '', paymentMethod: 'CARD', amount: '' });
-  const[booking,setBooking]=useState();
+  const [booking, setBooking] = useState();
 
 
  useEffect(() => {
@@ -92,64 +92,77 @@ export default function BookingsPage() {
 
   // Render by step
   return (
-    <Box p={3}>
+    <Box sx={{ p: { xs: 1, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
+      {/* Step 1: Passenger */}
       {step === 1 && (
-        <PassengerForm
-          onSuccess={(savedPassenger) => {
-            setPassenger(savedPassenger);
-            setStep(2);
-          }}
-        />
+        <Card elevation={2} sx={{ mb: 3 }}>
+          <CardContent>
+            <PassengerForm
+              onSuccess={(savedPassenger) => {
+                setPassenger(savedPassenger);
+                setStep(2);
+              }}
+            />
+          </CardContent>
+        </Card>
       )}
 
+      {/* Step 2: Search Flights */}
       {step === 2 && (
-        <>
-          <Typography variant="h5">Step 2: Search Flights</Typography>
-          <Stack direction="row" spacing={2} my={2}>
-            <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({ ...flightSearch, sourceAirport: e.target.value })} />
-            <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({ ...flightSearch, destinationAirport: e.target.value })} />
-            <TextField
-              label="Date" name="bookingDate" type="date" InputLabelProps={{ shrink: true }}
-              value={flightSearch.bookingDate} onChange={e => setFlightSearch({ ...flightSearch, bookingDate: e.target.value })}
-            />
-            <Button variant="contained" onClick={handleSearchFlights}>Search</Button>
-          </Stack>
-          {flights.length > 0 && (
-            <DataGrid
-              rows={flights}
-              columns={[
-                { field: 'flightID', headerName: 'ID', width: 80 },
-                { field: 'flightNumber', headerName: 'Flight #', width: 120 },
-                { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({ value }) => new Date(value).toLocaleString() },
-                { field: 'availableSeats', headerName: 'Seats', width: 100 }
-              ]}
-              getRowId={r => r.flightID}
-              autoHeight
-              onRowClick={handleSelectFlight}
-              components={{ Toolbar: GridToolbar }}
-            />
-          )}
-        </>
+        <Card elevation={2} sx={{ mb: 3 }}>
+          <CardContent>
+            <Typography variant="h5" mb={2} fontWeight={600}>Step 2: Search Flights</Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} my={2}>
+              <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({ ...flightSearch, sourceAirport: e.target.value })} fullWidth />
+              <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({ ...flightSearch, destinationAirport: e.target.value })} fullWidth />
+              <TextField
+                label="Date" name="bookingDate" type="date" InputLabelProps={{ shrink: true }}
+                value={flightSearch.bookingDate} onChange={e => setFlightSearch({ ...flightSearch, bookingDate: e.target.value })}
+                fullWidth
+              />
+              <Button variant="contained" onClick={handleSearchFlights} sx={{ minWidth: 120 }}>Search</Button>
+            </Stack>
+            {flights.length > 0 && (
+              <DataGrid
+                rows={flights}
+                columns={[
+                  { field: 'flightID', headerName: 'ID', width: 80 },
+                  { field: 'flightNumber', headerName: 'Flight #', width: 120 },
+                  { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({ value }) => new Date(value).toLocaleString() },
+                  { field: 'availableSeats', headerName: 'Seats', width: 100 }
+                ]}
+                getRowId={r => r.flightID}
+                autoHeight
+                onRowClick={handleSelectFlight}
+                components={{ Toolbar: GridToolbar }}
+                sx={{ bgcolor: '#fafafa', borderRadius: 2, mt: 2 }}
+              />
+            )}
+          </CardContent>
+        </Card>
       )}
 
+      {/* Step 3: Payment & Confirm */}
       {step === 3 && selectedFlight && (
         <Dialog open fullWidth maxWidth="sm">
-          <DialogTitle>Step 3: Payment & Confirm</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 600 }}>Step 3: Payment & Confirm</DialogTitle>
           <DialogContent>
-            <Typography gutterBottom>Flight: {selectedFlight.flightNumber}</Typography>
+            <Typography gutterBottom fontWeight={500} mb={2}>
+              Flight: <b>{selectedFlight.flightNumber}</b>
+            </Typography>
 
             {!payment?.paymentId ? (
               <PaymentForm
                 onSuccess={(savedPayment) => setPayment(savedPayment)}
               />
             ) : (
-              <Typography color="green">
+              <Typography color="success.main" fontWeight={600}>
                 Payment saved successfully with ID: {payment.paymentId}
               </Typography>
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setStep(2)}>Back</Button>F
+            <Button onClick={() => setStep(2)} variant="outlined">Back</Button>
             <Button
               variant="contained"
               onClick={handleBookingSubmit}
@@ -157,30 +170,32 @@ export default function BookingsPage() {
             >
               {bookingMutation.isLoading ? 'Booking…' : 'Confirm'}
             </Button>
-
           </DialogActions>
         </Dialog>
       )}
 
       {/* Always show existing bookings */}
-      <Box mt={4}>
-        <Typography variant="h5">All Bookings</Typography>
-        <DataGrid
-          rows={booking}
-         columns={[
-  { field: 'bookingId', headerName: 'Booking ID', width: 120 },
-  { field: 'paymentStatus', headerName: 'Status', width: 120 },
-  { field: 'flightNumber', headerName: 'Flight No.', width: 130 },
-  { field: 'departureDateTime', headerName: 'Departure', width: 180 },
-  { field: 'passengerName', headerName: 'Passenger', width: 160 },
-  { field: 'paymentAmount', headerName: 'Amount', width: 120, type: 'number' }
-]}
-          getRowId={r => r.bookingId}
-          loading={loadingBookings}
-          autoHeight
-          components={{ Toolbar: GridToolbar }}
-        />
-      </Box>
+      <Card elevation={2} sx={{ mt: 4 }}>
+        <CardContent>
+          <Typography variant="h5" mb={2} fontWeight={600}>All Bookings</Typography>
+          <DataGrid
+            rows={booking}
+            columns={[
+              { field: 'bookingId', headerName: 'Booking ID', width: 120 },
+              { field: 'paymentStatus', headerName: 'Status', width: 120 },
+              { field: 'flightNumber', headerName: 'Flight No.', width: 130 },
+              { field: 'departureDateTime', headerName: 'Departure', width: 180 },
+              { field: 'passengerName', headerName: 'Passenger', width: 160 },
+              { field: 'paymentAmount', headerName: 'Amount', width: 120, type: 'number' }
+            ]}
+            getRowId={r => r.bookingId}
+            loading={loadingBookings}
+            autoHeight
+            components={{ Toolbar: GridToolbar }}
+            sx={{ bgcolor: '#fafafa', borderRadius: 2 }}
+          />
+        </CardContent>
+      </Card>
     </Box>
   );
 }

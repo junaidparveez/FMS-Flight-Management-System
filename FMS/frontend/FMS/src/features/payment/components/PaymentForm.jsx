@@ -47,12 +47,14 @@ import { createPayment } from '../services/paymentService';
 
 export default function PaymentForm({ onSuccess }) {
   const [payment, setPayment] = useState({
-   paymentId:'',paymentMethod: 'CARD', amount: '' 
+    paymentId: '',
+    paymentMethod: 'CARD',
+    amount: ''
   });
 
   const paymentMutation = useMutation({
     mutationFn: createPayment,
-    onSuccess: (data) => onSuccess(data), // pass saved payment to parent
+    onSuccess: (data) => onSuccess(data),
   });
 
   const handleChange = (e) => {
@@ -68,8 +70,8 @@ export default function PaymentForm({ onSuccess }) {
   };
 
   return (
-    <Stack spacing={2}>
-      <Typography variant="h6">Payment Details</Typography>
+    <Stack spacing={2} sx={{ minWidth: 300 }}>
+      <Typography variant="h6" fontWeight={600} mb={1}>Payment Details</Typography>
 
       <TextField
         label="Amount"
@@ -79,6 +81,7 @@ export default function PaymentForm({ onSuccess }) {
         onChange={handleChange}
         fullWidth
         required
+        sx={{ bgcolor: '#fafafa', borderRadius: 1 }}
       />
 
       <TextField
@@ -89,6 +92,7 @@ export default function PaymentForm({ onSuccess }) {
         onChange={handleChange}
         fullWidth
         required
+        sx={{ bgcolor: '#fafafa', borderRadius: 1 }}
       >
         {['CARD', 'UPI', 'CASH'].map((method) => (
           <MenuItem key={method} value={method}>
@@ -101,6 +105,7 @@ export default function PaymentForm({ onSuccess }) {
         variant="contained"
         onClick={handleSubmit}
         disabled={paymentMutation.isLoading}
+        sx={{ fontWeight: 600, borderRadius: 2 }}
       >
         {paymentMutation.isLoading ? 'Processing…' : 'Save Payment'}
       </Button>

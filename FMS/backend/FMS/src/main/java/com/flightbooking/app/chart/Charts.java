@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.flightbooking.app.airport.AirportDto;
+import com.flightbooking.app.airport.AirportService;
 import com.flightbooking.app.booking.BookingDTO;
 import com.flightbooking.app.booking.BookingService;
 import com.flightbooking.app.payment.PaymentDTO;
@@ -26,6 +28,9 @@ public class Charts {
 
 	@Autowired
 	 private  BookingService bookingService;
+	
+	@Autowired
+	AirportService airportService;
 	
 	@Autowired
 	PaymentService paymentService;
@@ -77,6 +82,33 @@ public class Charts {
 	        row.put("monthNumber", monthNumber);        // e.g., 1 for Jan
 	        row.put("monthName", monthName);            // e.g., "January"
 	        row.put("value", entry.getValue());         // booking count
+	        result.add(row);
+	    }
+
+	    return result;
+	}
+	
+	@GetMapping("/airportlocation")
+	public List<Map<String, Object>> getAirportLocationChart() {
+	    List<AirportDto> airportDtos = airportService.getAllAirports();
+
+	    Map<String, Long> grouped = airportDtos.stream()
+	        .filter(b -> b.getLocation() != null)
+	        .collect(Collectors.groupingBy(
+	            b -> b.getLocation(), // get month number (1-12)
+	            TreeMap::new,
+	            Collectors.counting()
+	        ));
+
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    for (Map.Entry<String, Long> entry : grouped.entrySet()) {
+	        String location = entry.getKey();
+	        
+
+	        Map<String, Object> row = new HashMap<>();
+	        row.put("location", location);        // e.g., 1 for Jan
+	                // e.g., "January"
+	        row.put("count", entry.getValue());         // booking count
 	        result.add(row);
 	    }
 
