@@ -18,15 +18,46 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.flightbooking.app.booking.BookingDTO;
 import com.flightbooking.app.booking.BookingService;
+import com.flightbooking.app.payment.PaymentDTO;
+import com.flightbooking.app.payment.PaymentService;
 @RestController
 @RequestMapping("/charts")
 public class Charts {
 
 	@Autowired
 	 private  BookingService bookingService;
-	@GetMapping("/booking")
 	
+	@Autowired
+	PaymentService paymentService;
+	@GetMapping("/booking")
 	public List<Map<String, Object>> getBookingChart() {
+	    List<PaymentDTO> payments = paymentService.getAllPayments();
+
+	    Map<Integer, Long> grouped = payments.stream()
+	        .filter(b -> b.getCreatedOn() != null)
+	        .collect(Collectors.groupingBy(
+	            b -> b.getCreatedOn().getMonthValue(), // get month number (1-12)
+	            TreeMap::new,
+	            Collectors.counting()
+	        ));
+
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    for (Map.Entry<Integer, Long> entry : grouped.entrySet()) {
+	        int monthNumber = entry.getKey();
+	        String monthName = Month.of(monthNumber).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+	        Map<String, Object> row = new HashMap<>();
+	        row.put("monthNumber", monthNumber);        // e.g., 1 for Jan
+	        row.put("monthName", monthName);            // e.g., "January"
+	        row.put("value", entry.getValue());         // booking count
+	        result.add(row);
+	    }
+
+	    return result;
+	}
+
+	@GetMapping("/payment")
+	public List<Map<String, Object>> getPaymentChart() {
 	    List<BookingDTO> bookings = bookingService.getAllBookings();
 
 	    Map<Integer, Long> grouped = bookings.stream()
@@ -51,5 +82,4 @@ public class Charts {
 
 	    return result;
 	}
-
 }

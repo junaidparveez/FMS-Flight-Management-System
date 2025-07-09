@@ -10,7 +10,7 @@ import com.flightbooking.app.util.CardInfo;
 
 import java.util.List;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
 
 //    @ExceptionHandler(DataAccessException.class)

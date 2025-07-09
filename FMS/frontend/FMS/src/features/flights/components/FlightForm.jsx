@@ -14,6 +14,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { format } from "date-fns";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -70,8 +71,9 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     onSubmit: (values) => {
       const payload = {
         ...values,
-        departureDateTime: values.departureDateTime?.toISOString(),
-        arrivalDateTime: values.arrivalDateTime?.toISOString(),
+        departureDateTime: values.departureDateTime ? format(values.departureDateTime, "yyyy-MM-dd HH:mm:ss") : null,
+    arrivalDateTime: values.arrivalDateTime ? format(values.arrivalDateTime, "yyyy-MM-dd HH:mm:ss") : null,
+
       };
 
       if (isEdit) {
