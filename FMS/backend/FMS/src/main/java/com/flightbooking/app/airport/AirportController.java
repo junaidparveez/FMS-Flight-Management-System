@@ -35,5 +35,9 @@ public class AirportController {
         airportService.deleteAirport(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/options")
+    public List<AirportOption> listAirportOptions() {
+        return airportService.getOptions();
+    }
 }
 

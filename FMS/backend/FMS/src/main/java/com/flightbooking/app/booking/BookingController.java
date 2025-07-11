@@ -24,8 +24,8 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDTO createBooking(@RequestBody BookingDTO bookingDTO) {
-        return bookingService.saveBooking(bookingDTO);
+    public BookingDTO createBooking(@RequestBody BookingDTO Booking) {
+        return bookingService.saveBooking(Booking);
     }
 
     @DeleteMapping("/{id}")

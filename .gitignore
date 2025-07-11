@@ -1,0 +1,4 @@
+# ignore every Maven/Gradle build output folder
+**/target/
+FMS/backend/FMS/target/
+

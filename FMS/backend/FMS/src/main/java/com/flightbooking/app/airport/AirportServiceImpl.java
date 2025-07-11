@@ -55,4 +55,14 @@ public class AirportServiceImpl implements AirportService{
 	        airport.setFacility(dto.getFacility());
 	        return airport;
 	    }
+
+		@Override
+		public List<AirportOption> getOptions() {
+			return airportRepository.findAll().stream()
+            .map(a -> new AirportOption(
+                a.getAirportCode(),      // value
+                a.getLocation()          // label
+            ))
+            .collect(Collectors.toList());
+		}
 }

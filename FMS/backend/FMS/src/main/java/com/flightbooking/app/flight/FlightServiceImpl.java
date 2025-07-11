@@ -75,4 +75,14 @@ public class FlightServiceImpl implements FlightService {
         flight.setAirline(airlineRepo.findById(dto.getAirlineId()).get() );
         return flight;
     }
+
+	@Override
+	public List<FlightDTO> getFlightsByCriteria(BookingPayload payload) {
+		
+		return flightRepository.
+				findByOriginalAirportCodeAndDestinationAirportCodeAndAvailableSeatsGreaterThan(payload.getSourceAirport(),payload.getDestinationAirport(),0).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+		
+	}
 }

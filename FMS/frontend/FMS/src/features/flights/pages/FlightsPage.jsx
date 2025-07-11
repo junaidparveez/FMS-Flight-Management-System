@@ -9,10 +9,15 @@ import {
   Typography,
   IconButton,
   Container,
+  CircularProgress,
+  Paper,
+  Divider,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import FlightLandIcon from "@mui/icons-material/FlightLand";
 
 import FlightForm from "../components/FlightForm";
 import FlightChart from "../components/FlightChart";
@@ -24,8 +29,8 @@ const FlightsPage = () => {
   const [open, setOpen] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
 
-  // ✅ useQuery with object syntax
-  const { data: flights = [], isLoading } = useQuery({
+  // Fetch flights from backend
+  const { data: flights = [], isLoading, isError } = useQuery({
     queryKey: ["flights"],
     queryFn: fetchFlights,
   });
@@ -81,72 +86,104 @@ const FlightsPage = () => {
       ),
     },
   ];
-
   return (
-    <Container display="flex" height="100vh" width="100%">
-      {/* 2) Sidebar with fixed width */}
-
-      {/* 3) Main content area grows to fill remaining space */}
-      <Box component="main" flexGrow={1} p={2} overflow="auto">
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h4">Flights</Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleCreate}
-          >
-            Create New Flight
-          </Button>
-        </Box>
-
-        <Box my={2} display="flex" gap={2}>
-          <Card variant="outlined" sx={{ flex: 1 }}>
-            <CardContent>
-              <Typography variant="h6">Total Flights</Typography>
-              <Typography variant="h4">{totalFlights}</Typography>
-            </CardContent>
-          </Card>
-          <Card variant="outlined" sx={{ flex: 1 }}>
-            <CardContent>
-              <Typography variant="h6">Avg Available Seats</Typography>
-              <Typography variant="h4">{avgSeats}</Typography>
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box my={2}>
-          <FlightChart flights={flights} />
-        </Box>
-
-        <Box sx={{ height: 500, width: "100%" }}>
-          <DataGrid
-            rows={flights}
-            columns={columns}
-            getRowId={(row) => row.id || row.flightNumber}
-            loading={isLoading}
-            pageSize={10}
-            rowsPerPageOptions={[5, 10, 20]}
-            onRowClick={handleRowClick}
-            components={{ Toolbar: GridToolbar }}
-            componentsProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 300 },
-              },
-            }}
-            disableSelectionOnClick
-            autoHeight
-          />
-        </Box>
-
+    <Box sx={{ display: 'flex', minHeight: '100vh', background: '#f4f6f8' }}>
+      {/* Sidebar (optional, can be uncommented if needed) */}
+      {/* <Sidebar /> */}
+      <Container maxWidth="xl" sx={{ py: 4, flexGrow: 1 }}>
+        <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 3 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <FlightTakeoffIcon color="primary" fontSize="large" />
+              <Typography variant="h4" fontWeight={700} color="primary.main">
+                Flights Dashboard
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleCreate}
+              sx={{ borderRadius: 2, fontWeight: 600 }}
+            >
+              Create New Flight
+            </Button>
+          </Box>
+          <Divider sx={{ mb: 2 }} />
+          <Box display="flex" gap={2} mb={2}>
+            <Card variant="outlined" sx={{ flex: 1, bgcolor: '#e3f2fd', border: 0 }}>
+              <CardContent>
+                <Typography variant="subtitle2" color="text.secondary">Total Flights</Typography>
+                <Typography variant="h3" color="primary.main" fontWeight={700}>{totalFlights}</Typography>
+              </CardContent>
+            </Card>
+            <Card variant="outlined" sx={{ flex: 1, bgcolor: '#fff3e0', border: 0 }}>
+              <CardContent>
+                <Typography variant="subtitle2" color="text.secondary">Avg Available Seats</Typography>
+                <Typography variant="h3" color="orange" fontWeight={700}>{avgSeats}</Typography>
+              </CardContent>
+            </Card>
+          </Box>
+          <Box my={2}>
+            {/* Chart section */}
+            <Paper elevation={1} sx={{ p: 2, borderRadius: 2, bgcolor: '#f9fafb' }}>
+              <Typography variant="h6" mb={1} color="primary">Flights Overview</Typography>
+              {isLoading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+                  <CircularProgress />
+                </Box>
+              ) : isError ? (
+                <Typography color="error">Failed to load chart data.</Typography>
+              ) : (
+                <FlightChart flights={flights} />
+              )}
+            </Paper>
+          </Box>
+          <Box mt={3}>
+            <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
+              <Typography variant="h6" mb={2} color="primary">Flights Table</Typography>
+              {isLoading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
+                  <CircularProgress />
+                </Box>
+              ) : isError ? (
+                <Typography color="error">Failed to load flights data.</Typography>
+              ) : (
+                <DataGrid
+                  rows={flights}
+                  columns={columns}
+                  getRowId={(row) => row.id || row.flightNumber}
+                  loading={isLoading}
+                  pageSize={10}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  onRowClick={handleRowClick}
+                  components={{ Toolbar: GridToolbar }}
+                  componentsProps={{
+                    toolbar: {
+                      showQuickFilter: true,
+                      quickFilterProps: { debounceMs: 300 },
+                    },
+                  }}
+                  disableSelectionOnClick
+                  autoHeight
+                  sx={{
+                    bgcolor: '#fafafa',
+                    borderRadius: 2,
+                    boxShadow: 0,
+                    '& .MuiDataGrid-columnHeaders': { bgcolor: '#e3f2fd' },
+                  }}
+                />
+              )}
+            </Paper>
+          </Box>
+        </Paper>
         <FlightForm
           open={open}
           onClose={() => setOpen(false)}
           initialFlight={selectedFlight}
         />
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
-};
+}
 
 export default FlightsPage;

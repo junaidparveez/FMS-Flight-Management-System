@@ -9,5 +9,6 @@ public interface FlightService {
     Optional<FlightDTO> getFlightById(Integer id);
     FlightDTO saveFlight(FlightDTO flightDTO);
     void deleteFlight(Integer id);
+	List<FlightDTO> getFlightsByCriteria(BookingPayload payload);
 }
 

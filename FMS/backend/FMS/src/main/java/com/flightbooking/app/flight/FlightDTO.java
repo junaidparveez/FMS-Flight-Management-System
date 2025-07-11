@@ -1,6 +1,7 @@
 package com.flightbooking.app.flight;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.flightbooking.app.airline.Airline;
 import com.flightbooking.app.airport.Airport;
 import com.flightbooking.app.booking.Booking;
@@ -12,7 +13,9 @@ import java.util.List;
 public class FlightDTO {
     private Integer flightID;
     private Integer flightNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime departureDateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime arrivalDateTime;
     private String originalAirportCode;
     private String destinationAirportCode;

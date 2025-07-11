@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface BookingService {
     List<BookingDTO> getAllBookings();
     Optional<BookingDTO> getBookingById(Integer id);
-    BookingDTO saveBooking(BookingDTO bookingDTO);
+    BookingDTO saveBooking(BookingDTO Booking);
     void deleteBooking(Integer id);
 }

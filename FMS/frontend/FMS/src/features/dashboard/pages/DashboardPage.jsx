@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../../common/components/Sidebar";
 import TopBar from "../../../common/components/TopBar";
 
@@ -6,35 +6,93 @@ import Card from "../../../common//components/Card";
 import ChartCard from "../../../common//components/ChartCard";
 import ProgressCards from "../../../common//components/ProgressCards";
 import ColorCard from "../../../common//components/ColorCard";
+import apiClient from "../../../common/services/apiClient";
 
 const Content = () => {};
 const DashboardPage = () => {
-  const cards = [
-    {
-      title: "Total Bookings",
-      value: "1,250",
-      icon: "fa-plane",
-      color: "primary",
-    },
-    {
-      title: "Flights Today",
-      value: "85",
-      icon: "fa-calendar-day",
-      color: "success",
-    },
-    {
-      title: "Pending Payments",
-      value: "$12,500",
-      icon: "fa-credit-card",
-      color: "info",
-    },
-    {
-      title: "Canceled Flights",
-      value: "5",
-      icon: "fa-exclamation-triangle",
-      color: "warning",
-    },
-  ];
+
+
+
+
+  // const[totalFlights,setTotalFlights]=useState();
+  //  const[totalBookings,setTotalBookings]=useState();
+  //  const[totalPayments,setTotalPaymenst]=useState();
+  //  const[totalAirports,setTotalAirports]=useState();
+  const [cardsInfo, setCardsInfo] = useState([]);       // ← default to empty array
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const[monthlyBookingChart,setMonthlyBookingChart]=useState();
+  const[monthlyPaymentChart,setMonthlyPaymentChart]=useState();
+  useEffect(() => {
+    setIsLoading(true);
+    apiClient
+      .get("/generic/cardsinfo")                        // ← lowercase path
+      .then((res) => setCardsInfo(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load dashboard data");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+    useEffect(() => {
+    setIsLoading(true);
+    apiClient
+      .get("/charts/booking")                        // ← lowercase path
+      .then((res) => setMonthlyBookingChart(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load dashboard data");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+    useEffect(() => {
+    setIsLoading(true);
+    apiClient
+      .get("/charts/payment")                        // ← lowercase path
+      .then((res) => setMonthlyPaymentChart(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load dashboard data");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  // You can replace this with your own spinner component
+  if (isLoading) {
+    return <div className="text-center py-5">Loading dashboard…</div>;
+  }
+  if (error) {
+    return <div className="text-center py-5 text-danger">{error}</div>;
+  }
+
+  // const cards = [
+  //   {
+  //     title: "Total Bookings",
+  //     value: "1,250",
+  //     icon: "fa-plane",
+  //     color: "primary",
+  //   },
+  //   {
+  //     title: "Flights Today",
+  //     value: "85",
+  //     icon: "fa-calendar-day",
+  //     color: "success",
+  //   },
+  //   {
+  //     title: "Pending Payments",
+  //     value: "$12,500",
+  //     icon: "fa-credit-card",
+  //     color: "info",
+  //   },
+  //   {
+  //     title: "Canceled Flights",
+  //     value: "5",
+  //     icon: "fa-exclamation-triangle",
+  //     color: "warning",
+  //   },
+  // ];
 
   const colors = [
     { title: "Primary", color: "primary", hex: "#4e73df" },
@@ -57,7 +115,31 @@ const DashboardPage = () => {
       },
     ],
   };
+const bookingschartData = {
+  labels: monthlyBookingChart?.map((item) => item.monthName) || [],
+  datasets: [
+    {
+      label: "Bookings per Month",
+      data: monthlyBookingChart?.map((item) => item.value) || [],
+      backgroundColor: "rgba(78, 115, 223, 0.5)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      borderWidth: 2,
+    },
+  ],
+};
 
+const paymentchartData = {
+  labels: monthlyPaymentChart?.map((item) => item.monthName) || [],
+  datasets: [
+    {
+      label: "Payment per Month",
+      data: monthlyPaymentChart?.map((item) => item.value) || [],
+      backgroundColor: "rgba(78, 115, 223, 0.5)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      borderWidth: 2,
+    },
+  ],
+};
   const revenueData = {
     labels: ["Direct", "Referral", "Social"],
     datasets: [
@@ -94,7 +176,7 @@ const DashboardPage = () => {
               </div>
 
               <div className="row">
-                {cards.map((card, index) => (
+                {cardsInfo.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}
               </div>
@@ -104,14 +186,14 @@ const DashboardPage = () => {
               <div className="row">
                 {/* <!-- Area Chart --> */}
                 <ChartCard
-                  title="Earnings Overview"
-                  chartId="myAreaChart"
-                  data={earningsData}
+                  title="Booking "
+                  chartId="myPieChart"
+                  data={bookingschartData}
                 />
                 <ChartCard
-                  title="Revenue Sources"
+                  title="Payments"
                   chartId="myPieChart"
-                  data={revenueData}
+                  data={paymentchartData}
                 />
               </div>
 

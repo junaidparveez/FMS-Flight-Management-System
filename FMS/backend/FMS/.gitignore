@@ -1,0 +1,44 @@
+HELP.md
+
+**/target/
+**/target/**
+**/build/
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+# Include generated annotation sources from main
+!**/target/generated-sources/annotations/
+!**/target/generated-sources/annotations/**
+
+# Include generated test annotation sources as well
+!**/target/generated-test-sources/test-annotations/
+!**/target/generated-test-sources/test-annotations/**
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

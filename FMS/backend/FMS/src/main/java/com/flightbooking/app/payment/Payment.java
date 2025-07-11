@@ -21,9 +21,7 @@ public class Payment extends BaseEntityFields{
     private double amount;
     private LocalDateTime transactionDateTime;
 
-    @JoinColumn(name = "bookingId")
-    @OneToOne
-    @JsonIgnore
+    @OneToOne(mappedBy = "payment")
     private Booking booking;
 
 }

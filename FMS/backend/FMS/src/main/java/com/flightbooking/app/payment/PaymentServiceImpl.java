@@ -46,6 +46,8 @@ public class PaymentServiceImpl implements PaymentService {
         dto.setAmount(payment.getAmount());
         dto.setTransactionDateTime(payment.getTransactionDateTime());
         dto.setBooking(payment.getBooking());
+        dto.setCreatedBy(payment.getCreatedBy());
+        dto.setCreatedOn(payment.getCreatedOn());
         return dto;
     }
 

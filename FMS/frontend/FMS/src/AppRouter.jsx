@@ -8,6 +8,7 @@ import BookingPage from './features/bookings/pages/BookingPage';
 import ProtectedRoute from './common/components/ProtectedRoute';
 import Register from './features/auth/pages/Register';
 import AirportPage from './features/airport/pages/AirportPage';
+import PassengerPage from './features/passenger/pages/PassengerPage';
 
 const AppRouter = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
       <Route path="/airports" element={<ProtectedRoute><AirportPage /></ProtectedRoute>} />
        <Route path="/airlines" element={<ProtectedRoute><AirlinePage /></ProtectedRoute>} />
       <Route path="/bookings" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+       <Route path="/passengers" element={<ProtectedRoute><PassengerPage /></ProtectedRoute>} />
       <Route path="/register" element={<Register/>}></Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

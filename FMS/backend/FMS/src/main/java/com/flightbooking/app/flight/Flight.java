@@ -1,6 +1,7 @@
 package com.flightbooking.app.flight;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.flightbooking.app.airline.Airline;
@@ -21,11 +22,13 @@ public class Flight extends BaseEntityFields{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer flightID;
 	private Integer FlightNumber;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime DepartureDateTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime ArrivalDateTime;
-	private String OriginalAirportCode;
-	private String DestinationAirportCode;
-	private int AvailableSeats;
+	private String originalAirportCode;
+	private String destinationAirportCode;
+	private int availableSeats;
 	@OneToMany
 	@JsonIgnore
 	private List<Booking> bookings;
