@@ -65,12 +65,12 @@ public class SecurityConfiguration {
 	        .authorizeHttpRequests(authz -> authz
 	            .requestMatchers(
 //	            		"/**",
-	                "/auth/login",
-	                "/auth/register",
-	                "/swagger-ui/**",
-	                "/v3/api-docs/**",
-	                "/swagger-resources/**",
-	                "/webjars/**"
+	                "fms-flight-management-system.onrender.com/auth/login",
+	                "fms-flight-management-system.onrender.com/auth/register",
+	                "fms-flight-management-system.onrender.com/swagger-ui/**",
+	                "fms-flight-management-system.onrender.com/v3/api-docs/**",
+	                "fms-flight-management-system.onrender.com/swagger-resources/**",
+	                "fms-flight-management-system.onrender.com/webjars/**"
 	            ).permitAll()
 	            .anyRequest().authenticated()
 	        )
