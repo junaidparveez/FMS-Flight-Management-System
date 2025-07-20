@@ -1,5 +1,5 @@
 // src/features/flights/pages/FlightsPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Box,
@@ -29,7 +29,6 @@ const FlightsPage = () => {
   
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [flightCount, setFlightCount] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
 
   // Fetch flights from backend
@@ -44,17 +43,15 @@ const FlightsPage = () => {
     queryFn: fetchAirlines,
   });
 
-  useEffect(() => {
-    const fetchFlightCount = async () => {
-      try {
-        const response = await apiClient.get("/flights/count");
-        setFlightCount(response.data);
-      } catch (error) {
-        setFlightCount(0);
-      }
-    };
-    fetchFlightCount();
-  }, []);
+
+  // Fetch flight count using React Query
+  const { data: flightCount, isLoading: isCountLoading, isError: isCountError } = useQuery({
+    queryKey: ["flightCount"],
+    queryFn: async () => {
+      const response = await apiClient.get("/flights/count");
+      return response.data;
+    },
+  });
 
 
 
@@ -274,7 +271,7 @@ const FlightsPage = () => {
                   fontWeight={700}
                   sx={{ letterSpacing: 1 }}
                 >
-                  {flightCount}
+                  {isCountLoading ? <CircularProgress size={28} /> : isCountError ? <span style={{color: 'red'}}>Error</span> : flightCount}
                 </Typography>
               </CardContent>
             </Card>
