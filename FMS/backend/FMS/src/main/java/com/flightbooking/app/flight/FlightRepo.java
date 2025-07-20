@@ -12,5 +12,6 @@ public interface FlightRepo extends JpaRepository<Flight,Integer> {
             String destinationAirportCode,
             int minSeats   // pass 0 to mean “≠ 0”
     );
+	List<Flight> findTop10ByOrderByFlightIdDesc();
 
 }
