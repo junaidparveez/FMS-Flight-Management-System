@@ -1,5 +1,6 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect,useState} from "react";
+import apiClient from "../../../common/services/apiClient";
 import { useFormik } from "formik";
 import {
   Dialog,
@@ -24,7 +25,7 @@ import { fetchAirports, fetchAirlines, createFlight, updateFlight } from "../ser
 const FlightForm = ({ open, onClose, initialFlight }) => {
   const queryClient = useQueryClient();
   const isEdit = Boolean(initialFlight);
-
+ const [options, setOptions] = useState([]);
   // Fetch airports and airlines
   const { data: airports = [] } = useQuery({
     queryKey: ["airports"],
@@ -34,6 +35,15 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     queryKey: ["airlines"],
     queryFn: fetchAirlines,
   });
+ 
+  
+    // load airport options on mount
+    useEffect(() => {
+      apiClient
+        .get("/airports/options")
+        .then((res) => setOptions(res.data))
+        .catch((err) => console.error(err));
+    }, []);
 
   // Mutations
   const createMutation = useMutation({
@@ -42,12 +52,18 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
       queryClient.invalidateQueries({ queryKey: ["flights"] });
       onClose();
     },
+    onSettled: () => {
+      formik.setSubmitting(false);
+    },
   });
   const updateMutation = useMutation({
     mutationFn: updateFlight,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flights"] });
       onClose();
+    },
+    onSettled: () => {
+      formik.setSubmitting(false);
     },
   });
 
@@ -56,8 +72,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     initialValues: {
       flightNumber: initialFlight?.flightNumber || "",
       flightID: initialFlight?.flightID || "",
-      departureDateTime: initialFlight?.departureDateTime ? new Date(initialFlight.departureDateTime) : null,
-      arrivalDateTime: initialFlight?.arrivalDateTime ? new Date(initialFlight.arrivalDateTime) : null,
+    
       originalAirportCode: initialFlight?.originalAirportCode || "",
       destinationAirportCode: initialFlight?.destinationAirportCode || "",
       availableSeats: initialFlight?.availableSeats || 0,
@@ -68,11 +83,9 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     onSubmit: (values) => {
       const payload = {
         ...values,
-        departureDateTime: values.departureDateTime ? format(values.departureDateTime, "yyyy-MM-dd HH:mm:ss") : null,
-        arrivalDateTime: values.arrivalDateTime ? format(values.arrivalDateTime, "yyyy-MM-dd HH:mm:ss") : null,
-      };
+             };
       if (isEdit) {
-        updateMutation.mutate({ id: initialFlight.id, ...payload });
+        updateMutation.mutate({ id: initialFlight.flightID, ...payload });
       } else {
         createMutation.mutate(payload);
       }
@@ -84,9 +97,7 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
     if (initialFlight) {
       formik.setValues({
         ...initialFlight,
-        departureDateTime: initialFlight.departureDateTime ? new Date(initialFlight.departureDateTime) : null,
-        arrivalDateTime: initialFlight.arrivalDateTime ? new Date(initialFlight.arrivalDateTime) : null,
-      });
+              });
     } else {
       formik.resetForm();
     }
@@ -95,107 +106,106 @@ const FlightForm = ({ open, onClose, initialFlight }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{isEdit ? "Edit Flight" : "Create Flight"}</DialogTitle>
-      <DialogContent>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Stack spacing={2} mt={1}>
-            {/* Flight Number */}
-            <TextField
-              fullWidth
-              label="Flight Number"
-              name="flightNumber"
-              value={formik.values.flightNumber}
-              onChange={formik.handleChange}
-            />
-
-            {/* Departure Date */}
-            <DatePicker
-              label="Departure Date"
-              value={formik.values.departureDateTime}
-              onChange={(val) => formik.setFieldValue("departureDateTime", val)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-
-            {/* Arrival Date */}
-            <DatePicker
-              label="Arrival Date"
-              value={formik.values.arrivalDateTime}
-              onChange={(val) => formik.setFieldValue("arrivalDateTime", val)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-
-            {/* Origin Airport Code */}
-            <TextField
-              fullWidth
-              label="Origin Airport Code"
-              name="originalAirportCode"
-              value={formik.values.originalAirportCode}
-              onChange={formik.handleChange}
-            />
-
-            {/* Destination Airport Code */}
-            <TextField
-              fullWidth
-              label="Destination Airport Code"
-              name="destinationAirportCode"
-              value={formik.values.destinationAirportCode}
-              onChange={formik.handleChange}
-            />
-
-            {/* Available Seats */}
-            <TextField
-              fullWidth
-              type="number"
-              label="Available Seats"
-              name="availableSeats"
-              value={formik.values.availableSeats}
-              onChange={formik.handleChange}
-            />
-
-            {/* Airport Select */}
-            <FormControl fullWidth>
-              <InputLabel>Airport</InputLabel>
-              <Select
-                name="airportId"
-                value={formik.values.airportId}
+      <form onSubmit={formik.handleSubmit}>
+        <DialogTitle>{isEdit ? "Edit Flight" : "Create Flight"}</DialogTitle>
+        <DialogContent>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Stack spacing={2} mt={1}>
+              {/* Flight Number */}
+              <TextField
+                fullWidth
+                label="Flight Number"
+                name="flightNumber"
+                value={formik.values.flightNumber}
                 onChange={formik.handleChange}
+              />
+
+              {/* Origin Airport Code */}
+              <TextField
+                select
+                label="Source"
+                name="originalAirportCode"
+                value={formik.values.originalAirportCode}
+                onChange={formik.handleChange}
+                sx={{ minWidth: 200 }}
               >
-                {airports.map((a) => (
-                  <MenuItem key={a.airportCode} value={a.airportCode}>
-                    {a.airportName}
+                {options.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
+              </TextField>
 
-            {/* Airline Select */}
-            <FormControl fullWidth>
-              <InputLabel>Airline</InputLabel>
-              <Select
-                name="airlineId"
-                value={formik.values.airlineId}
+              <TextField
+                select
+                label="Destination"
+                name="destinationAirportCode"
+                value={formik.values.destinationAirportCode}
                 onChange={formik.handleChange}
+                sx={{ minWidth: 200 }}
               >
-                {airlines.map((al) => (
-                  <MenuItem key={al.airlineId} value={al.airlineId}>
-                    {al.airlineName}
+                {options.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
-          </Stack>
-        </LocalizationProvider>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={formik.submitForm}
-          variant="contained"
-          disabled={formik.isSubmitting}
-        >
-          Save
-        </Button>
-      </DialogActions>
+              </TextField>
+
+              {/* Available Seats */}
+              <TextField
+                fullWidth
+                type="number"
+                label="Available Seats"
+                name="availableSeats"
+                value={formik.values.availableSeats}
+                onChange={formik.handleChange}
+              />
+
+              {/* Airport Select */}
+              <FormControl fullWidth>
+                <InputLabel>Airport</InputLabel>
+                <Select
+                  name="airportId"
+                  value={formik.values.airportId}
+                  onChange={formik.handleChange}
+                >
+                  {airports.map((a) => (
+                    <MenuItem key={a.airportCode} value={a.airportCode}>
+                      {a.airportName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Airline Select */}
+              <FormControl fullWidth>
+                <InputLabel>Airline</InputLabel>
+                <Select
+                  name="airlineId"
+                  value={formik.values.airlineId}
+                  onChange={formik.handleChange}
+                >
+                  {airlines.map((al) => (
+                    <MenuItem key={al.airlineId} value={al.airlineId}>
+                      {al.airlineName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+          </LocalizationProvider>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={formik.isSubmitting}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };

@@ -29,6 +29,11 @@ public class FlightController {
         return flightService.saveFlight(flightDTO);
     }
 
+    @PutMapping("/{id}")
+    public FlightDTO updateFlight(@PathVariable Integer id,@RequestBody FlightDTO flightDTO) {
+        return flightService.updateFlight(flightDTO,id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFlight(@PathVariable Integer id) {
         flightService.deleteFlight(id);

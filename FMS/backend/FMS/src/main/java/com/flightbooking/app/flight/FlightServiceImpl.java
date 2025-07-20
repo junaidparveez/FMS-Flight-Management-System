@@ -85,4 +85,11 @@ public class FlightServiceImpl implements FlightService {
                 .collect(Collectors.toList());
 		
 	}
+
+	@Override
+	public FlightDTO updateFlight(FlightDTO flightDTO,Integer id) {
+		  Flight flight = convertToEntity(flightDTO);
+		  flight.setFlightID(id);
+	        return convertToDTO(flightRepository.save(flight));
+	}
 }

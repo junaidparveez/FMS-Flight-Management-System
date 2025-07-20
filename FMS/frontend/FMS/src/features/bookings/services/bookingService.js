@@ -10,7 +10,7 @@ export const fetchBookings = async () => {
 
 export const createBooking = async ({ flightId, passengerId, payment }) => {
   // Your BookingDTO likely needs passengerId and flightId
-  const payload = { flightId, passengerId, ...payment };
+  const payload = { flightId, passengerId, paymentId: payment.paymentId,  paymentStatus: payment.paymentId ? 'PAID' : 'PENDING', };
   const res = await apiClient.post('/bookings', payload);
   return res.data;
 };

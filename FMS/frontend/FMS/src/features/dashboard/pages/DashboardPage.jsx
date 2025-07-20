@@ -166,13 +166,7 @@ const paymentchartData = {
               {/* <!-- Page Heading --> */}
               <div className="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
-                <a
-                  href="#"
-                  className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                >
-                  <i className="fas fa-download fa-sm text-white-50"></i>{" "}
-                  Generate Report
-                </a>
+                
               </div>
 
               <div className="row">
@@ -211,7 +205,7 @@ const paymentchartData = {
                 ))}
                 <div className="col-lg-6 mb-4">
                   {/* <!-- Illustrations --> */}
-                  <div className="card shadow mb-4">
+                  {/* <div className="card shadow mb-4">
                     <div className="card-header py-3">
                       <h6 className="m-0 font-weight-bold text-primary">
                         Illustrations
@@ -247,10 +241,10 @@ const paymentchartData = {
                         Browse Illustrations on unDraw &rarr;
                       </a>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* <!-- Approach --> */}
-                  <div className="card shadow mb-4">
+                  {/* <div className="card shadow mb-4">
                     <div className="card-header py-3">
                       <h6 className="m-0 font-weight-bold text-primary">
                         Development Approach
@@ -269,7 +263,7 @@ const paymentchartData = {
                         utility classNamees.
                       </p>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

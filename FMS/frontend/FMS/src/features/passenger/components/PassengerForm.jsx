@@ -3,7 +3,7 @@ import { Stack, TextField, Button, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { createPassenger } from '../services/passengerService';
 
-export default function PassengerForm({ onSuccess }) {
+export default function PassengerForm({ onSuccess = () => {}, submitLabel = 'Save' }) {
   const [passenger, setPassenger] = useState({
     passengerId:'',
     firstName: '',
@@ -23,7 +23,17 @@ export default function PassengerForm({ onSuccess }) {
       const saved = await passengerMutation.mutateAsync(passenger);
       onSuccess(saved); // Pass saved passenger back to parent
     } catch (err) {
-      alert('Failed to save passenger');
+      // Log the full error object for debugging
+      console.error('Failed to save passenger', err);
+      let message = 'Failed to save passenger.';
+      if (err?.response?.data?.message) {
+        message += `\n${err.response.data.message}`;
+      } else if (err?.message) {
+        message += `\n${err.message}`;
+      } else if (typeof err === 'string') {
+        message += `\n${err}`;
+      }
+      alert(message);
     }
   };
 
@@ -48,7 +58,7 @@ export default function PassengerForm({ onSuccess }) {
           disabled={passengerMutation.isLoading}
           sx={{ fontWeight: 600, borderRadius: 2 }}
         >
-          {passengerMutation.isLoading ? 'Saving…' : 'Next'}
+          {passengerMutation.isLoading ? 'Saving…' : submitLabel}
         </Button>
       </Stack>
     </>

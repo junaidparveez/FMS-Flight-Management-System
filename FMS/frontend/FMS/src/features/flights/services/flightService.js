@@ -27,12 +27,14 @@ export const createFlight = async (flightData) => {
 };
 
 export const updateFlight = async ({ id, ...flightData }) => {
+
   const response = await apiClient.put(`/flights/${id}`, flightData);
   return response.data;
 };
 
 // Delete a flight
 export const deleteFlight = async (id) => {
+  console.log("calling flight with ID:", id);
   const response = await apiClient.delete(`/flights/${id}`);
   return response.data;
 };

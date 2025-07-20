@@ -48,16 +48,7 @@ const PassengerPage = () => {
     { field: 'lastName', headerName: 'Last Name', flex: 1 },
     { field: 'emailId', headerName: 'Email', flex: 1 },
     { field: 'passportNumber', headerName: 'Passport', width: 140 },
-    {
-      field: 'delete',
-      headerName: 'Delete',
-      sortable: false,
-      renderCell: (params) => (
-        <IconButton onClick={() => handleDelete(params.id)} color="error">
-          <DeleteIcon />
-        </IconButton>
-      ),
-    },
+    
   ];
 
   return (
@@ -121,6 +112,11 @@ const PassengerPage = () => {
               open={open}
               onClose={() => setOpen(false)}
               initialPassenger={selectedPassenger}
+              onSuccess={() => {
+                setOpen(false);
+                setSelectedPassenger(null);
+                queryClient.invalidateQueries({ queryKey: ['passengers'] });
+              }}
             />
           </Paper>
         )}

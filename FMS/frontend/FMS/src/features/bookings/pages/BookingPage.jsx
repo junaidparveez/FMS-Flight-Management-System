@@ -12,7 +12,7 @@ import { fetchBookings, createBooking } from '../services/bookingService';
 import apiClient from '../../../common/services/apiClient';
 import PassengerForm from '../../passenger/components/PassengerForm';
 import PaymentForm from '../../payment/components/PaymentForm';
-
+import FlightSearchForm from '../pages/FlightSearchForm';
 
 export default function BookingsPage() {
   const queryClient = useQueryClient();
@@ -38,35 +38,21 @@ export default function BookingsPage() {
     };
 
     fetchBookings();
-  }, []);
+  }, [payment]);
   // Load bookings
   const { data: bookings = [], isLoading: loadingBookings } = useQuery({
     queryKey: ['bookings'],
     queryFn: fetchBookings,
   });
 
-  // Mutations
-  const passengerMutation = useMutation({ mutationFn: createPassenger });
+
   const bookingMutation = useMutation({
     mutationFn: createBooking,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bookings'] }),
   });
 
-  // Handlers
 
 
-  const handleSearchFlights = async () => {
-    const { sourceAirport, destinationAirport, bookingDate } = flightSearch;
-    if (!sourceAirport || !destinationAirport || !bookingDate) {
-      return alert('Fill search fields');
-    }
-    try {
-      const res = await apiClient.post('/flights/search', flightSearch);
-      setFlights(res.data);
-    } catch {
-      alert('Flight search failed');
-    }
-  };
   const handleSelectFlight = (params) => {
     setSelectedFlight(params.row);
     setStep(3);
@@ -77,19 +63,21 @@ export default function BookingsPage() {
       await bookingMutation.mutateAsync({
         flightId: selectedFlight.flightID,
         passengerId: passenger.passengerId,
+      
         payment: { ...payment, transactionDateTime: new Date().toISOString() }
       });
       alert('Booking successful');
       setStep(1);
       setPassenger({ firstName: '', lastName: '', emailId: '', passportNumber: '' });
       setFlightSearch({ sourceAirport: '', destinationAirport: '', bookingDate: '' });
+      setPayment({ paymentId: '', paymentMethod: 'CARD', amount: '' });
       setFlights([]);
       setSelectedFlight(null);
     } catch {
       alert('Booking failed');
     }
   };
-
+  console.log('bookingDate',{flightSearch});
   // Render by step
   return (
     <Box sx={{ p: { xs: 1, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
@@ -102,6 +90,7 @@ export default function BookingsPage() {
                 setPassenger(savedPassenger);
                 setStep(2);
               }}
+              submitLabel="Next"
             />
           </CardContent>
         </Card>
@@ -112,23 +101,38 @@ export default function BookingsPage() {
         <Card elevation={2} sx={{ mb: 3 }}>
           <CardContent>
             <Typography variant="h5" mb={2} fontWeight={600}>Step 2: Search Flights</Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} my={2}>
-              <TextField label="From" name="sourceAirport" value={flightSearch.sourceAirport} onChange={e => setFlightSearch({ ...flightSearch, sourceAirport: e.target.value })} fullWidth />
-              <TextField label="To" name="destinationAirport" value={flightSearch.destinationAirport} onChange={e => setFlightSearch({ ...flightSearch, destinationAirport: e.target.value })} fullWidth />
-              <TextField
-                label="Date" name="bookingDate" type="date" InputLabelProps={{ shrink: true }}
-                value={flightSearch.bookingDate} onChange={e => setFlightSearch({ ...flightSearch, bookingDate: e.target.value })}
-                fullWidth
-              />
-              <Button variant="contained" onClick={handleSearchFlights} sx={{ minWidth: 120 }}>Search</Button>
-            </Stack>
+            <FlightSearchForm
+              onSearch={(searchParams) => {
+                setFlightSearch(searchParams);
+                // mimic handleSearchFlights logic
+                (async () => {
+                  try {
+                    const res = await apiClient.post('/flights/search', searchParams);
+                    setFlights(res.data);
+                  } catch {
+                    alert('Flight search failed');
+                  }
+                })();
+              }}
+            />
+          
             {flights.length > 0 && (
               <DataGrid
                 rows={flights}
                 columns={[
                   { field: 'flightID', headerName: 'ID', width: 80 },
                   { field: 'flightNumber', headerName: 'Flight #', width: 120 },
-                  { field: 'departureDateTime', headerName: 'Departs', width: 180, valueFormatter: ({ value }) => new Date(value).toLocaleString() },
+                  {
+                    field: 'departureDateTime',
+                    headerName: 'Departs',
+                    width: 180,
+                    valueFormatter: () => {
+                      // params.value is the date string
+                      
+                      const date = new Date(flightSearch.bookingDate);
+                      return date.toLocaleString();
+                    }
+                  },
                   { field: 'availableSeats', headerName: 'Seats', width: 100 }
                 ]}
                 getRowId={r => r.flightID}
@@ -184,7 +188,7 @@ export default function BookingsPage() {
               { field: 'bookingId', headerName: 'Booking ID', width: 120 },
               { field: 'paymentStatus', headerName: 'Status', width: 120 },
               { field: 'flightNumber', headerName: 'Flight No.', width: 130 },
-              { field: 'departureDateTime', headerName: 'Departure', width: 180 },
+            
               { field: 'passengerName', headerName: 'Passenger', width: 160 },
               { field: 'paymentAmount', headerName: 'Amount', width: 120, type: 'number' }
             ]}
