@@ -92,4 +92,10 @@ public class FlightServiceImpl implements FlightService {
 		  flight.setFlightID(id);
 	        return convertToDTO(flightRepository.save(flight));
 	}
+
+	@Override
+	public Integer flightSize() {
+		// TODO Auto-generated method stub
+		return flightRepository.findAll().size();
+	}
 }

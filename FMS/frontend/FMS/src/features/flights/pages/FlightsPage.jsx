@@ -1,5 +1,5 @@
 // src/features/flights/pages/FlightsPage.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Box,
@@ -23,11 +23,13 @@ import FlightForm from "../components/FlightForm";
 import FlightChart from "../components/FlightChart";
 import { fetchFlights, deleteFlight, fetchAirports, fetchAirlines } from "../services/flightService";
 import Sidebar from "../../../common/components/Sidebar";
+import apiClient from "../../../common/services/apiClient";
 
 const FlightsPage = () => {
   
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [flightCount, setFlightCount] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
 
   // Fetch flights from backend
@@ -41,6 +43,21 @@ const FlightsPage = () => {
     queryKey: ["airlines"],
     queryFn: fetchAirlines,
   });
+
+  useEffect(() => {
+    const fetchFlightCount = async () => {
+      try {
+        const response = await apiClient.get("/flights/count");
+        setFlightCount(response.data);
+      } catch (error) {
+        setFlightCount(0);
+      }
+    };
+    fetchFlightCount();
+  }, []);
+
+
+
   const { data: airports = [] } = useQuery({
     queryKey: ["airports"],
     queryFn: fetchAirports,
@@ -69,12 +86,12 @@ const FlightsPage = () => {
   };
 
   // Stats
-  const totalFlights = flights.length;
+
   console.log("Sample flight row:", flights[0]);
-  const avgSeats = totalFlights
+  const avgSeats = flightCount
     ? (
         flights.reduce((sum, f) => sum + (f.availableSeats || 0), 0) /
-        totalFlights
+        flightCount
       ).toFixed(1)
     : 0;
     const columns = [
@@ -257,7 +274,7 @@ const FlightsPage = () => {
                   fontWeight={700}
                   sx={{ letterSpacing: 1 }}
                 >
-                  {totalFlights}
+                  {flightCount}
                 </Typography>
               </CardContent>
             </Card>

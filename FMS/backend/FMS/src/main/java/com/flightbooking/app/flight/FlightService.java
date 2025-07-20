@@ -11,5 +11,6 @@ public interface FlightService {
     void deleteFlight(Integer id);
 	List<FlightDTO> getFlightsByCriteria(BookingPayload payload);
 	FlightDTO updateFlight(FlightDTO flightDTO,Integer id);
+	Integer flightSize();
 }
 

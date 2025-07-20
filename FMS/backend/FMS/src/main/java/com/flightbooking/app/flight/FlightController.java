@@ -18,6 +18,10 @@ public class FlightController {
         return flightService.getAllFlights();
     }
 
+    @GetMapping("count")
+    public Integer getTotalFlights() {
+        return flightService.flightSize();
+    }
     @GetMapping("/{id}")
     public ResponseEntity<FlightDTO> getFlightById(@PathVariable Integer id) {
         Optional<FlightDTO> flight = flightService.getFlightById(id);
