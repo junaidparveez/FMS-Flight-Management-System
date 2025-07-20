@@ -24,8 +24,8 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private  AirlineRepo airlineRepo;
     @Override
-    public List<FlightDTO> getAllFlights() {
-        return flightRepository.findAll().stream()
+     public List<FlightDTO> getAllFlights() {
+        return flightRepository.findTop10ByOrderByFlightIdDesc().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
