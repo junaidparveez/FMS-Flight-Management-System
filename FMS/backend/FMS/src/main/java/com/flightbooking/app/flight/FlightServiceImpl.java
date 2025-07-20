@@ -96,6 +96,6 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	public Integer flightSize() {
 		// TODO Auto-generated method stub
-		return flightRepository.findAll().size();
+		return (int) flightRepository.count();
 	}
 }

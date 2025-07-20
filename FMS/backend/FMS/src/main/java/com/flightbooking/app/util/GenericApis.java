@@ -40,9 +40,9 @@ public class GenericApis {
     public ResponseEntity<List<CardInfo>> fetchAll() {
         try {
             // safely fetch all lists (repos will never return null)
-            List<?> airports = airportRepo.findAll();
-            List<?> flights  = flightRepo.findAll();
-            List<?> bookings = bookingRepo.findAll();
+        	int airports = (int) airportRepo.count();
+            int flights  = (int) flightRepo.count();
+            int bookings = (int) bookingRepo.count();
             List<?> payments = paymentRepo.findAll();
 
             // sum payment amounts as doubles
@@ -51,16 +51,16 @@ public class GenericApis {
 
             List<CardInfo> cards = List.of(
                 new CardInfo("Total Bookings",
-                             String.valueOf(bookings.size()),
+                             String.valueOf(bookings),
                              "fa-plane", "primary"),
                 new CardInfo("Flights Available",
-                             String.valueOf(flights.size()),
+                             String.valueOf(flights),
                              "fa-calendar-day", "success"),
                 new CardInfo("Total Payments",
                              String.format("$%,.2f", totalPayments),
                              "fa-credit-card", "info"),
                 new CardInfo("Total Airports",
-                             String.valueOf(airports.size()),
+                             String.valueOf(airports),
                              "fa-exclamation-triangle", "warning")
             );
 
