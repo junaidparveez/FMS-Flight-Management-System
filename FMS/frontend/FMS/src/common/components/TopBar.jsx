@@ -8,30 +8,22 @@ const TopBar = () => {
     <>
       <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
         {/* <!-- Sidebar Toggle (Topbar) --> */}
+
         <button
           id="sidebarToggleTop"
           className="btn btn-link d-md-none rounded-circle mr-3"
+          onClick={() => {
+            // Toggle sidebar for mobile
+            const sidebar = document.getElementById('accordionSidebar');
+            if (sidebar) {
+              sidebar.classList.toggle('toggled');
+            }
+          }}
         >
           <i className="fa fa-bars"></i>
         </button>
 
-        {/* <!-- Topbar Search --> */}
-        <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-          <div className="input-group">
-            <input
-              type="text"
-              className="form-control bg-light border-0 small"
-              placeholder="Search for..."
-              aria-label="Search"
-              aria-describedby="basic-addon2"
-            />
-            <div className="input-group-append">
-              <button className="btn btn-primary" type="button">
-                <i className="fas fa-search fa-sm"></i>
-              </button>
-            </div>
-          </div>
-        </form>
+   
 
         {/* <!-- Topbar Navbar --> */}
         <ul className="navbar-nav ml-auto">
@@ -93,28 +85,29 @@ const TopBar = () => {
               aria-labelledby="alertsDropdown"
             >
               <h6 className="dropdown-header">Alerts Center</h6>
+              {/* Flight-related alerts */}
               <Link className="dropdown-item d-flex align-items-center" to="#">
                 <div className="mr-3">
                   <div className="icon-circle bg-primary">
-                    <i className="fas fa-file-alt text-white"></i>
+                    <i className="fas fa-plane-departure text-white"></i>
                   </div>
                 </div>
                 <div>
-                  <div className="small text-gray-500">December 12, 2019</div>
+                  <div className="small text-gray-500">Today</div>
                   <span className="font-weight-bold">
-                    A new monthly report is ready to download!
+                    New flight added: Mumbai to Delhi
                   </span>
                 </div>
               </Link>
               <Link className="dropdown-item d-flex align-items-center" to="#">
                 <div className="mr-3">
                   <div className="icon-circle bg-success">
-                    <i className="fas fa-donate text-white"></i>
+                    <i className="fas fa-check-circle text-white"></i>
                   </div>
                 </div>
                 <div>
-                  <div className="small text-gray-500">December 7, 2019</div>
-                  $290.29 has been deposited into your account!
+                  <div className="small text-gray-500">Today</div>
+                  Flight AI-202 successfully departed from Bangalore.
                 </div>
               </Link>
               <Link className="dropdown-item d-flex align-items-center" to="#">
@@ -124,17 +117,22 @@ const TopBar = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="small text-gray-500">December 2, 2019</div>
-                  Spending Alert: We've noticed unusually high spending for your
-                  account.
+                  <div className="small text-gray-500">Today</div>
+                  Flight 6E-305 is delayed due to weather conditions.
                 </div>
               </Link>
-              <Link
-                className="dropdown-item text-center small text-gray-500"
-                href="#"
-              >
-                Show All Alerts
+              <Link className="dropdown-item d-flex align-items-center" to="#">
+                <div className="mr-3">
+                  <div className="icon-circle bg-info">
+                    <i className="fas fa-plane-arrival text-white"></i>
+                  </div>
+                </div>
+                <div>
+                  <div className="small text-gray-500">Yesterday</div>
+                  Flight UK-101 has landed at Delhi Airport.
+                </div>
               </Link>
+              
             </div>
           </li>
 
@@ -151,7 +149,7 @@ const TopBar = () => {
             >
               <i className="fas fa-envelope fa-fw"></i>
               {/* <!-- Counter - Messages --> */}
-              <span className="badge badge-danger badge-counter">7</span>
+              <span className="badge badge-danger badge-counter">2</span>
             </a>
             {/* <!-- Dropdown - Messages --> */}
             <div
@@ -159,6 +157,7 @@ const TopBar = () => {
               aria-labelledby="messagesDropdown"
             >
               <h6 className="dropdown-header">Message Center</h6>
+              {/* Flight-related messages */}
               <a className="dropdown-item d-flex align-items-center" href="#">
                 <div className="dropdown-list-image mr-3">
                   <img
@@ -170,10 +169,9 @@ const TopBar = () => {
                 </div>
                 <div className="font-weight-bold">
                   <div className="text-truncate">
-                    Hi there! I am wondering if you can help me with a problem
-                    I've been having.
+                    Your flight AI-202 is now boarding at Gate 5.
                   </div>
-                  <div className="small text-gray-500">Emily Fowler · 58m</div>
+                  <div className="small text-gray-500">Air India · 5m</div>
                 </div>
               </a>
               <a className="dropdown-item d-flex align-items-center" href="#">
@@ -187,55 +185,13 @@ const TopBar = () => {
                 </div>
                 <div>
                   <div className="text-truncate">
-                    I have the photos that you ordered last month, how would you
-                    like them sent to you?
+                    Flight 6E-305 is delayed by 30 minutes due to weather.
                   </div>
-                  <div className="small text-gray-500">Jae Chun · 1d</div>
+                  <div className="small text-gray-500">IndiGo · 30m</div>
                 </div>
               </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
-                <div className="dropdown-list-image mr-3">
-                  <img
-                    className="rounded-circle"
-                    src="img/undraw_profile_3.svg"
-                    alt="..."
-                  />
-                  <div className="status-indicator bg-warning"></div>
-                </div>
-                <div>
-                  <div className="text-truncate">
-                    Last month's report looks great, I am very happy with the
-                    progress so far, keep up the good work!
-                  </div>
-                  <div className="small text-gray-500">Morgan Alvarez · 2d</div>
-                </div>
-              </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
-                <div className="dropdown-list-image mr-3">
-                  <img
-                    className="rounded-circle"
-                    src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                    alt="..."
-                  />
-                  <div className="status-indicator bg-success"></div>
-                </div>
-                <div>
-                  <div className="text-truncate">
-                    Am I a good boy? The reason I ask is because someone told me
-                    that people say this to all dogs, even if they aren't
-                    good...
-                  </div>
-                  <div className="small text-gray-500">
-                    Chicken the Dog · 2w
-                  </div>
-                </div>
-              </a>
-              <a
-                className="dropdown-item text-center small text-gray-500"
-                href="#"
-              >
-                Read More Messages
-              </a>
+           
+            
             </div>
           </li>
 
@@ -265,19 +221,6 @@ const TopBar = () => {
               className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
               aria-labelledby="userDropdown"
             >
-              <a className="dropdown-item" href="#">
-                <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                Profile
-              </a>
-              <a className="dropdown-item" href="#">
-                <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                Settings
-              </a>
-              <a className="dropdown-item" href="#">
-                <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                Activity Log
-              </a>
-              <div className="dropdown-divider"></div>
               <div className="dropdown-item" onClick={logout}>
                 <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                 Logout

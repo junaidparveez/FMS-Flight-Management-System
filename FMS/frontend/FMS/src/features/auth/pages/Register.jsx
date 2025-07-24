@@ -25,7 +25,6 @@ const Register = () => {
       !firstName ||
       !lastName ||
       !emailId ||
-      !passportNumber ||
       !userName ||
       !password
     ) {
@@ -39,7 +38,6 @@ const Register = () => {
         firstName,
         lastName,
         emailId,
-        passportNumber,
         userName,
         password,
       };
@@ -100,18 +98,6 @@ const Register = () => {
               placeholder="Enter your email"
               value={emailId}
               onChange={(e) => setEmailId(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label">Passport Number</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter your passport number"
-              value={passportNumber}
-              onChange={(e) => setPassportNumber(e.target.value)}
               required
             />
           </div>

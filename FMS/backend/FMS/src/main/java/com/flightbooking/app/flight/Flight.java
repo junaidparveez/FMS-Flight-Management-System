@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.flightbooking.app.airline.Airline;
 import com.flightbooking.app.airport.Airport;
 import com.flightbooking.app.booking.Booking;
@@ -23,9 +24,9 @@ public class Flight extends BaseEntityFields{
 	private Integer flightID;
 	private Integer FlightNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime DepartureDateTime;
+	private LocalDateTime DepartureDateTime=LocalDateTime.now();;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime ArrivalDateTime;
+	private LocalDateTime ArrivalDateTime=LocalDateTime.now();
 	private String originalAirportCode;
 	private String destinationAirportCode;
 	private int availableSeats;

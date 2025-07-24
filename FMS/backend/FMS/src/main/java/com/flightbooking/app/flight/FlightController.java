@@ -18,6 +18,10 @@ public class FlightController {
         return flightService.getAllFlights();
     }
 
+    @GetMapping("count")
+    public Integer getTotalFlights() {
+        return flightService.flightSize();
+    }
     @GetMapping("/{id}")
     public ResponseEntity<FlightDTO> getFlightById(@PathVariable Integer id) {
         Optional<FlightDTO> flight = flightService.getFlightById(id);
@@ -27,6 +31,11 @@ public class FlightController {
     @PostMapping
     public FlightDTO createFlight(@RequestBody FlightDTO flightDTO) {
         return flightService.saveFlight(flightDTO);
+    }
+
+    @PutMapping("/{id}")
+    public FlightDTO updateFlight(@PathVariable Integer id,@RequestBody FlightDTO flightDTO) {
+        return flightService.updateFlight(flightDTO,id);
     }
 
     @DeleteMapping("/{id}")

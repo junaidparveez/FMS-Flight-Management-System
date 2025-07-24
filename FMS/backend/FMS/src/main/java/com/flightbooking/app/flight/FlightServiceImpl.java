@@ -24,8 +24,8 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private  AirlineRepo airlineRepo;
     @Override
-    public List<FlightDTO> getAllFlights() {
-        return flightRepository.findAll().stream()
+     public List<FlightDTO> getAllFlights() {
+        return flightRepository.findTop10ByOrderByFlightIDDesc().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -84,5 +84,18 @@ public class FlightServiceImpl implements FlightService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
 		
+	}
+
+	@Override
+	public FlightDTO updateFlight(FlightDTO flightDTO,Integer id) {
+		  Flight flight = convertToEntity(flightDTO);
+		  flight.setFlightID(id);
+	        return convertToDTO(flightRepository.save(flight));
+	}
+
+	@Override
+	public Integer flightSize() {
+		// TODO Auto-generated method stub
+		return (int) flightRepository.count();
 	}
 }

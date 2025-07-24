@@ -88,37 +88,7 @@ const Sidebar = () => {
         <hr className="sidebar-divider" />
 
         {/* Payments Section */}
-        <div className="sidebar-heading">Payments</div>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/payments">
-            <i className="fas fa-credit-card"></i>
-            <span>Payment History</span>
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/pending-payments">
-            <i className="fas fa-exclamation-circle"></i>
-            <span>Pending Payments</span>
-          </Link>
-        </li>
-
-        {/* Divider */}
-        <hr className="sidebar-divider" />
-
-        {/* Reports Section */}
-        <div className="sidebar-heading">Reports</div>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/reports">
-            <i className="fas fa-chart-line"></i>
-            <span>Reports & Analytics</span>
-          </Link>
-        </li>
-
-        {/* Divider */}
-        <hr className="sidebar-divider d-none d-md-block" />
+      
 
         {/* Sidebar Toggler */}
         <div className="text-center d-none d-md-inline">
