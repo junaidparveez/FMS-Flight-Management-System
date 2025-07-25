@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { getToken, refreshToken, clearAuth } from '../utils/auth';
 const apiClient = axios.create({
-  // either of these two is fine:
-  baseURL:"https://fms-flight-management-system-production.up.railway.app/",
-  // —or—
-  // baseURL: `${process.env.REACT_APP_API_URL}`,
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
+
 
 apiClient.interceptors.request.use((config) => {
   const token = getToken();
