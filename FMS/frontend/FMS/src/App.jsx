@@ -8,11 +8,14 @@ function App() {
   let navigate = useNavigate();
   useEffect(() => {
     function clearLocalStorageAndLogout() {
-      alert(
-        "Your session has expired. You have been logged out for security reasons."
-      );
-      navigate("/login");
-      localStorage.clear();
+     const tokenPresent = localStorage.getItem("token");
+      if (tokenPresent) {
+        alert(
+          "Your session has expired. You have been logged out for security reasons."
+        );
+        localStorage.clear();
+        navigate("/login");
+      }
     }
 
     function scheduleClear() {
